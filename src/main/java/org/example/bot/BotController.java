@@ -5,7 +5,6 @@ import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.request.*;
 import com.pengrad.telegrambot.request.EditMessageText;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.request.SendPhoto;
 import com.pengrad.telegrambot.request.SendVideo;
 import org.redisson.Redisson;
 import org.redisson.api.RMap;
@@ -22,8 +21,8 @@ import java.util.Properties;
 import java.util.Random;
 
 import static com.pengrad.telegrambot.model.request.ParseMode.HTML;
-import static org.example.bot.redisson.RedissonDB.accountApprove;
-import static org.example.bot.redisson.RedissonDB.accountDepositApprove;
+import static org.example.bot.RedissonDB.accountApprove;
+import static org.example.bot.RedissonDB.accountDepositApprove;
 
 public class BotController {
 

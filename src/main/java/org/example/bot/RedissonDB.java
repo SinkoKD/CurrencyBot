@@ -1,4 +1,4 @@
-package org.example.bot.redisson;
+package org.example.bot;
 
 import com.pengrad.telegrambot.request.SendMessage;
 import org.example.bot.User;
