@@ -5,8 +5,6 @@ import java.io.Serializable;
 public class User implements Serializable {
     private String name;
     private String UID;
-    private int minTimeDeal;
-    private int maxTimeDeal;
     private boolean registered;
     private boolean deposited;
 
@@ -23,11 +21,10 @@ public class User implements Serializable {
         this.deposited = deposited;
     }
 
-    public User(String name, String UID, int minTimeDeal, int maxTimeDeal, boolean registered, boolean deposited) {
+    public User(String name, String UID, boolean registered, boolean deposited) {
         this.name = name;
         this.UID = UID;
-        this.minTimeDeal = minTimeDeal;
-        this.maxTimeDeal = maxTimeDeal;
+;
         this.registered = registered;
         this.deposited = deposited;
     }
@@ -52,19 +49,4 @@ public class User implements Serializable {
         this.name = name;
     }
 
-    public int getMinTimeDeal() {
-        return minTimeDeal;
-    }
-
-    public void setMinTimeDeal(int minTimeDeal) {
-        this.minTimeDeal = minTimeDeal;
-    }
-
-    public int getMaxTimeDeal() {
-        return maxTimeDeal;
-    }
-
-    public void setMaxTimeDeal(int maxTimeDeal) {
-        this.maxTimeDeal = maxTimeDeal;
-    }
 }
