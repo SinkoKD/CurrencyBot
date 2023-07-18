@@ -1,5 +1,6 @@
 package org.example.bot;
 
+import com.google.gson.Gson;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
@@ -162,19 +163,16 @@ public class BotController {
                     } else if (messageText.equals("/help") || messageCallbackText.equals("Help")) {
                         bot.execute(new SendMessage(playerId, "There will be help"));
                     } else if (userRegistered(playerId)) {
-                        // Логика для зарегистрированных пользователей
-                        bot.execute(new SendMessage(playerId, "Welcome back, " + playerName + "!"));
+                        bot.execute(new SendMessage(playerId, "Before trying any signals you need to register"));
                     } else {
-                        // Логика для незарегистрированных пользователей
-                        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-                        InlineKeyboardButton buttonRegister = new InlineKeyboardButton("Register here");
-                        buttonRegister.url("https://bit.ly/ChatGPTtrading");
-                        inlineKeyboardMarkup.addRow(buttonRegister);
-                        bot.execute(new SendMessage(playerId, "🛑 You are not registered yet. To start receiving signals, please click the 'Register here' button to register.").replyMarkup(inlineKeyboardMarkup));
+                        User user = new User("K", String.valueOf(playerId), false, false);
+                            String userKey = USER_DB_MAP_KEY + ":" + user.getUID();
+                            String userJson = convertUserToJson(user); // Метод convertUserToJson преобразует объект User в JSON-строку
+                            jedis.set(userKey, userJson);
+
+
                     }
-
                     System.out.println(update);
-
                 });
 
             } catch (Exception e) {
@@ -198,4 +196,10 @@ public class BotController {
             return false;
         }
     }
+
+    private static String convertUserToJson(User user) {
+        Gson gson = new Gson();
+        return gson.toJson(user);
+    }
+
 }
