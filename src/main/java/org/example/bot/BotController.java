@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
+import com.pengrad.telegrambot.model.request.Keyboard;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.EditMessageText;
 import com.pengrad.telegrambot.request.SendMessage;
@@ -32,7 +33,8 @@ public class BotController {
     static RedissonClient redisson;
     public static RMap<String, User> userDBMap;
 
-    public static <Keyboard> void main(String[] args) {
+
+    public static void main(String[] args) {
         String TOKEN = "";
         String AdminID = "710511911";
         try {
