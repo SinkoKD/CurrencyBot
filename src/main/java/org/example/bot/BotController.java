@@ -358,5 +358,9 @@ public class BotController {
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
         });
 
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            redisson.shutdown();
+        }));
+
     }
 }
