@@ -50,7 +50,7 @@ public class BotController {
 
         Config config = new Config();
         String redisURL = System.getenv("REDIS_URL");
-        config.useSingleServer().setAddress(redisURL);
+        config.useSingleServer().setAddress(redisURL).setPassword("pab749828f5c250426202b61313ad540dfdc4e697ed17176ef7f605f93173c2f9");
         redisson = Redisson.create(config);
         userDBMap = redisson.getMap("userDBMap");
 
