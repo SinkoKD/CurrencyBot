@@ -13,16 +13,26 @@ import org.redisson.Redisson;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
+import redis.clients.jedis.Jedis;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Random;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import static com.pengrad.telegrambot.model.request.ParseMode.HTML;
 import static org.example.bot.RedissonDB.accountApprove;
@@ -49,9 +59,7 @@ public class BotController {
         }
 
         Config config = new Config();
-        String redisURL = System.getenv("REDIS_URL");
-        config.useSingleServer().setAddress(redisURL);
-        redisson = Redisson.create(config);
+        redisson = getConnection(); // Получение подключения к Redis
         userDBMap = redisson.getMap("userDBMap");
 
         //       Hi, I'm Chat GPT bot for binary options trading. I was created to analyze brokers using artificial intelligence. Click the button below to get started!
@@ -365,4 +373,36 @@ public class BotController {
         }));
 
     }
+
+    private static RedissonClient getConnection() {
+        try {
+            TrustManager bogusTrustManager = new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
+
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+            };
+
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, new TrustManager[]{bogusTrustManager}, new java.security.SecureRandom());
+
+            HostnameVerifier bogusHostnameVerifier = (hostname, session) -> true;
+
+            String redisURL = System.getenv("REDIS_URL"); // Получение URL Redis из переменной окружения Heroku
+
+            Config config = new Config();
+            config.useSingleServer()
+                    .setAddress(redisURL);
+
+            return Redisson.create(config);
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            throw new RuntimeException("Cannot obtain Redis connection!", e);
+        }
+    }
 }
+
