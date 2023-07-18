@@ -48,8 +48,9 @@ public class BotController {
 
         Config config = new Config();
         String redisURL = System.getenv("REDIS_URL");
-        config.useSingleServer().setAddress(redisURL);
+        config.useSingleServer().setAddress("rediss://:pab749828f5c250426202b61313ad540dfdc4e697ed17176ef7f605f93173c2f9@ec2-54-197-107-175.compute-1.amazonaws.com:30990");
         redisson = Redisson.create(config);
+        
         userDBMap = redisson.getMap("redis-asymmetrical-85165");
 
         //       Hi, I'm Chat GPT bot for binary options trading. I was created to analyze brokers using artificial intelligence. Click the button below to get started!
