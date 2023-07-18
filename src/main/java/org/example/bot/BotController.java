@@ -393,11 +393,11 @@ public class BotController {
 
             HostnameVerifier bogusHostnameVerifier = (hostname, session) -> true;
 
-            String redisURL = System.getenv("REDIS_URL"); // Получение URL Redis из переменной окружения Heroku
+           // String redisURL = System.getenv("REDIS_URL"); // Получение URL Redis из переменной окружения Heroku
 
             Config config = new Config();
             config.useSingleServer()
-                    .setAddress(redisURL);
+                    .setAddress("rediss://:pab749828f5c250426202b61313ad540dfdc4e697ed17176ef7f605f93173c2f9@ec2-54-197-107-175.compute-1.amazonaws.com:30990");
 
             return Redisson.create(config);
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
