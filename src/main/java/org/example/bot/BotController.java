@@ -59,7 +59,8 @@ public class BotController {
         }
 
         Config config = new Config();
-        redisson = getConnection(); // Получение подключения к Redis
+        config.useSingleServer().setAddress(System.getenv("REDIS_URL"));
+        redisson = Redisson.create(config);
         userDBMap = redisson.getMap("userDBMap");
 
         //       Hi, I'm Chat GPT bot for binary options trading. I was created to analyze brokers using artificial intelligence. Click the button below to get started!
@@ -374,7 +375,7 @@ public class BotController {
 
     }
 
-    private static RedissonClient getConnection() {
+    private static Jedis getConnection() {
         try {
             TrustManager bogusTrustManager = new X509TrustManager() {
                 public X509Certificate[] getAcceptedIssuers() {
@@ -393,13 +394,11 @@ public class BotController {
 
             HostnameVerifier bogusHostnameVerifier = (hostname, session) -> true;
 
-           // String redisURL = System.getenv("REDIS_URL"); // Получение URL Redis из переменной окружения Heroku
+            return new Jedis(URI.create(System.getenv("REDIS_URL")),
+                    sslContext.getSocketFactory(),
+                    sslContext.getDefaultSSLParameters(),
+                    bogusHostnameVerifier);
 
-            Config config = new Config();
-            config.useSingleServer()
-                    .setAddress("rediss://:pab749828f5c250426202b61313ad540dfdc4e697ed17176ef7f605f93173c2f9@ec2-54-197-107-175.compute-1.amazonaws.com:30990");
-
-            return Redisson.create(config);
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
             throw new RuntimeException("Cannot obtain Redis connection!", e);
         }
