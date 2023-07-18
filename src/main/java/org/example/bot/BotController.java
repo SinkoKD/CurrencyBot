@@ -11,6 +11,7 @@ import com.pengrad.telegrambot.request.SendVideo;
 import org.redisson.Redisson;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,9 +29,8 @@ import static org.example.bot.RedissonDB.accountDepositApprove;
 
 public class BotController {
 
-    static RedissonClient redisson = Redisson.create();
-    public static RMap<String, User> userDBMap = redisson.getMap("redis-asymmetrical-85165");
-
+    static RedissonClient redisson;
+    public static RMap<String, User> userDBMap;
 
     public static <Keyboard> void main(String[] args) {
         String TOKEN = "";
@@ -45,6 +45,12 @@ public class BotController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        Config config = new Config();
+        String redisURL = System.getenv("REDIS_URL");
+        config.useSingleServer().setAddress(redisURL);
+        redisson = Redisson.create(config);
+        userDBMap = redisson.getMap("redis-asymmetrical-85165");
 
         //       Hi, I'm Chat GPT bot for binary options trading. I was created to analyze brokers using artificial intelligence. Click the button below to get started!
 
