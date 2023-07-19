@@ -160,7 +160,7 @@ public class BotController {
                                 "\uD83D\uDCCA In order to start receiving signals you need to follow a couple of steps. In the beginning, click on 'Let's start'.\n" +
                                 "\n" +
                                 "❗\uFE0F If you have any problems or suggestions, you can contact bot support via the /support command.").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
-                    } else if (userDeposited(playerId)) {
+                    } else if (userDeposited(playerId) == true) {
                         if (messageText.equals("Get Signal") || messageCallbackText.equals("getSignal")) {
                             Date date = new Date();
                             ArrayList<String> listOfPairs = new ArrayList<>();
@@ -254,7 +254,7 @@ public class BotController {
                                 e.printStackTrace();
                             }
                             bot.execute(new SendMessage(playerId, "<b>GO!</b>").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
-                        }   else if (userRegistered(playerId)) {
+                        }   else if (userRegistered(playerId) == true) {
                             if (messageCallbackText.equals("IDeposit")) {
                                 bot.execute(new SendMessage(playerId, "⏳ Great your deposit will be checking soon."));
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
@@ -329,11 +329,11 @@ public class BotController {
             System.out.println("userRegistered");
             String userKey = USER_DB_MAP_KEY + ":" + playerId;
             if (!jedis.exists(userKey)){
-                System.out.println("False");
+                System.out.println("User not exist registration");
                 return false;
             }
             User checkedUser = convertJsonToUser(jedis.get(userKey));
-            System.out.println("True");
+            System.out.println("Registered " + checkedUser.getName() + checkedUser.getUID() +"???" + checkedUser.isRegistered() );
             return checkedUser.isRegistered();
         } catch (Exception e) {
             e.printStackTrace();
@@ -346,14 +346,12 @@ public class BotController {
         try (Jedis jedis = jedisPool.getResource()) {
             System.out.println("userDeposited");
             String userKey = USER_DB_MAP_KEY + ":" + playerId;
-            System.out.println("False2");
             if (!jedis.exists(userKey)){
-                System.out.println("False");
+                System.out.println("User not exist deposit");
                 return false;
             }
-            System.out.println("True2" );
             User checkedUser = convertJsonToUser(jedis.get(userKey));
-            System.out.println("True" + checkedUser.getName() + checkedUser.getUID() +"???");
+            System.out.println("Deposit " + checkedUser.getName() + checkedUser.getUID() +"???" + checkedUser.isDeposited() );
             return checkedUser.isDeposited();
         } catch (Exception e) {
             e.printStackTrace();
