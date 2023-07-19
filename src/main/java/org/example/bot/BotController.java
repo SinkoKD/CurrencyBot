@@ -351,9 +351,9 @@ public class BotController {
                 System.out.println("False");
                 return false;
             }
-            System.out.println("True2");
+            System.out.println("True2" );
             User checkedUser = convertJsonToUser(jedis.get(userKey));
-            System.out.println("True");
+            System.out.println("True" + checkedUser.getName() + checkedUser.getUID());
             return checkedUser.isDeposited();
         } catch (Exception e) {
             e.printStackTrace();
