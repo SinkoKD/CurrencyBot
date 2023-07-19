@@ -329,9 +329,11 @@ public class BotController {
             System.out.println("userRegistered");
             String userKey = USER_DB_MAP_KEY + ":" + playerId;
             if (!jedis.exists(userKey)){
+                System.out.println("False");
                 return false;
             }
             User checkedUser = convertJsonToUser(jedis.get(userKey));
+            System.out.println("True");
             return checkedUser.isRegistered();
         } catch (Exception e) {
             e.printStackTrace();
@@ -344,10 +346,14 @@ public class BotController {
         try (Jedis jedis = jedisPool.getResource()) {
             System.out.println("userDeposited");
             String userKey = USER_DB_MAP_KEY + ":" + playerId;
+            System.out.println("False2");
             if (!jedis.exists(userKey)){
+                System.out.println("False");
                 return false;
             }
+            System.out.println("True2");
             User checkedUser = convertJsonToUser(jedis.get(userKey));
+            System.out.println("True");
             return checkedUser.isDeposited();
         } catch (Exception e) {
             e.printStackTrace();
