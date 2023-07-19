@@ -75,7 +75,6 @@ public class BotController {
                     long playerId = 0L;
                     String messageText = "";
                     String messageCallbackText = "";
-                    int messageId = 0;
                     String uid = "";
                     Path resourcePath = Paths.get("src/main/resources");
                     File imageFile = resourcePath.resolve("photoChatGPT.jpg").toFile();
@@ -90,12 +89,10 @@ public class BotController {
                         playerName = update.message().from().firstName();
                         playerId = update.message().from().id();
                         messageText = update.message().text();
-                        messageId = update.message().messageId();
                     } else if (update.message() == null) {
                         playerName = update.callbackQuery().from().firstName();
                         playerId = update.callbackQuery().from().id();
                         messageCallbackText = update.callbackQuery().data();
-                        messageId = update.callbackQuery().message().messageId();
                     }
 
                     if (String.valueOf(playerId).equals(AdminID)) {
@@ -172,14 +169,14 @@ public class BotController {
                         bot.execute(new SendMessage(playerId, registeredUser));
                         bot.execute(new SendMessage(playerId, "Before trying any signals you need to register"));
                     } else {
-                        User user = new User("K", String.valueOf(playerId), false, false);
+                            User user = new User("K", String.valueOf(playerId), false, false);
                             String userKey = USER_DB_MAP_KEY + ":" + user.getUID();
                             String userJson = convertUserToJson(user); // Метод convertUserToJson преобразует объект User в JSON-строку
                             jedis.set(userKey, userJson);
                         bot.execute(new SendMessage(playerId, "Done!!"));
+                        User savedUser = convertJsonToUser(userJson);
                         String registeredUser = jedis.get(userKey);
-                        bot.execute(new SendMessage(playerId, registeredUser));
-
+                        bot.execute(new SendMessage(playerId, registeredUser + "Your normal name: " + savedUser.getName() + " UID: "+ savedUser.getUID()));
                     }
                     System.out.println(update);
                 });
@@ -209,6 +206,11 @@ public class BotController {
     private static String convertUserToJson(User user) {
         Gson gson = new Gson();
         return gson.toJson(user);
+    }
+
+    private static User convertJsonToUser(String json) {
+        Gson gson = new Gson();
+        return gson.fromJson(json, User.class);
     }
 
 }
