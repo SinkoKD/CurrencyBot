@@ -254,7 +254,8 @@ public class BotController {
                                 e.printStackTrace();
                             }
                             bot.execute(new SendMessage(playerId, "<b>GO!</b>").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
-                        }   else if (userRegistered(playerId) == true) {
+                        }
+                    } else if (userRegistered(playerId) == true) {
                             if (messageCallbackText.equals("IDeposit")) {
                                 bot.execute(new SendMessage(playerId, "⏳ Great your deposit will be checking soon."));
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
@@ -308,7 +309,8 @@ public class BotController {
                                 bot.execute(new SendMessage(playerId, "Before trying any signals you need to register"));
                             }
                         }
-                    }
+
+
                   //  System.out.println(update);
                 });
 
