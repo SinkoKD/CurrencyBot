@@ -311,7 +311,7 @@ public class BotController {
                             }
                         }
                     }
-                    System.out.println(update);
+                  //  System.out.println(update);
                 });
 
             } catch (Exception e) {
