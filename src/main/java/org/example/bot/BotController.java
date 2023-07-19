@@ -150,6 +150,18 @@ public class BotController {
                         }
                     } else if (messageText.equals("/help") || messageCallbackText.equals("Help")) {
                         bot.execute(new SendMessage(playerId, "There will be help"));
+                    } else if (messageText.equals("/start")) {
+                        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+                        InlineKeyboardButton button32 = new InlineKeyboardButton("Let's start");
+                        button32.callbackData("RegisterMe");
+                        inlineKeyboardMarkup.addRow(button32);
+                        bot.execute(new SendMessage(playerId, "\uD83D\uDC4B Hi, " + playerName + "\n" +
+                                "\n" +
+                                "\uD83E\uDD16 I'm Chat GPT bot for binary options trading and I am based on the latest technology. I'm analyzing brokers using artificial intelligence. That's why my signals are highly accurate and I can analyze the market in real time at your request. All you have to do is copy it! \uD83D\uDCC8 \n" +
+                                "\n" +
+                                "\uD83D\uDCCA In order to start receiving signals you need to follow a couple of steps. In the beginning, click on 'Let's start'.\n" +
+                                "\n" +
+                                "❗\uFE0F If you have any problems or suggestions, you can contact bot support via the /support command.").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                     } else if (userDeposited(playerId)) {
                         if (messageText.equals("Get Signal") || messageCallbackText.equals("getSignal")) {
                             Date date = new Date();
@@ -244,19 +256,7 @@ public class BotController {
                                 e.printStackTrace();
                             }
                             bot.execute(new SendMessage(playerId, "<b>GO!</b>").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
-                        } else if (messageText.equals("/start")) {
-                            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-                            InlineKeyboardButton button32 = new InlineKeyboardButton("Let's start");
-                            button32.callbackData("RegisterMe");
-                            inlineKeyboardMarkup.addRow(button32);
-                            bot.execute(new SendMessage(playerId, "\uD83D\uDC4B Hi, " + playerName + "\n" +
-                                    "\n" +
-                                    "\uD83E\uDD16 I'm Chat GPT bot for binary options trading and I am based on the latest technology. I'm analyzing brokers using artificial intelligence. That's why my signals are highly accurate and I can analyze the market in real time at your request. All you have to do is copy it! \uD83D\uDCC8 \n" +
-                                    "\n" +
-                                    "\uD83D\uDCCA In order to start receiving signals you need to follow a couple of steps. In the beginning, click on 'Let's start'.\n" +
-                                    "\n" +
-                                    "❗\uFE0F If you have any problems or suggestions, you can contact bot support via the /support command.").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
-                        }  else if (userRegistered(playerId)) {
+                        }   else if (userRegistered(playerId)) {
                             if (messageCallbackText.equals("IDeposit")) {
                                 bot.execute(new SendMessage(playerId, "⏳ Great your deposit will be checking soon."));
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;

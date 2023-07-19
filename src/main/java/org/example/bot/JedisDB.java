@@ -11,6 +11,9 @@ public class JedisDB {
     static boolean userRegistered(long playerId) {
         try (Jedis jedis = jedisPool.getResource()) {
             String userKey = USER_DB_MAP_KEY + ":" + playerId;
+            if (!jedis.exists(userKey)){
+                return false;
+            }
             User checkedUser = convertJsonToUser(jedis.get(userKey));
             return checkedUser.isRegistered();
         } catch (Exception e) {
@@ -22,6 +25,9 @@ public class JedisDB {
     static boolean userDeposited(long playerId) {
         try (Jedis jedis = jedisPool.getResource()) {
             String userKey = USER_DB_MAP_KEY + ":" + playerId;
+            if (!jedis.exists(userKey)){
+                return false;
+            }
             User checkedUser = convertJsonToUser(jedis.get(userKey));
             return checkedUser.isDeposited();
         } catch (Exception e) {
