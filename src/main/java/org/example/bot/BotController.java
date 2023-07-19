@@ -176,7 +176,7 @@ public class BotController {
                         bot.execute(new SendMessage(playerId, "Done!!"));
                         String registeredUser = jedis.get(userKey);
                         User savedUser = convertJsonToUser(registeredUser);
-                        bot.execute(new SendMessage(playerId, registeredUser));
+                        bot.execute(new SendMessage(playerId, registeredUser + "Name: " + savedUser.getName() + "UID:" + savedUser.getUID()));
 
                     }
                     System.out.println(update);
@@ -213,5 +213,4 @@ public class BotController {
         Gson gson = new Gson();
         return gson.fromJson(json, User.class);
     }
-
 }
