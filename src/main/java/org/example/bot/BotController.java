@@ -174,9 +174,10 @@ public class BotController {
                             String userJson = convertUserToJson(user); // Метод convertUserToJson преобразует объект User в JSON-строку
                             jedis.set(userKey, userJson);
                         bot.execute(new SendMessage(playerId, "Done!!"));
-                        User savedUser = convertJsonToUser(userJson);
                         String registeredUser = jedis.get(userKey);
-                        bot.execute(new SendMessage(playerId, registeredUser + "Your normal name: " + savedUser.getName() + " UID: "+ savedUser.getUID()));
+                        User savedUser = convertJsonToUser(registeredUser);
+                        bot.execute(new SendMessage(playerId, registeredUser));
+
                     }
                     System.out.println(update);
                 });

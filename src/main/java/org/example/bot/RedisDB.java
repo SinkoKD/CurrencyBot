@@ -10,7 +10,7 @@ public class RedisDB {
     public static void accountApprove(long playerId) {
         User user = userDBMap.get(String.valueOf(playerId));
         if (user != null) {
-            user.setApproved(true);
+            user.setRegistered(true);
             user.setDeposited(false);
             userDBMap.put(String.valueOf(playerId), user);
         }
@@ -19,7 +19,7 @@ public class RedisDB {
     public static void accountDepositApprove(long playerId) {
         User user = userDBMap.get(String.valueOf(playerId));
         if (user != null) {
-            user.setApproved(true);
+            user.setRegistered(true);
             user.setDeposited(true);
             userDBMap.put(String.valueOf(playerId), user);
         }
