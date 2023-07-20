@@ -147,7 +147,7 @@ public class BotController {
                             inlineKeyboardMarkup.addRow(button7);
                             bot.execute(new SendMessage(tgID, "❌ Something went wrong. Make sure you deposit the new account you created through the link and then click 'Deposit done' ").replyMarkup(inlineKeyboardMarkup));
                             bot.execute(new SendMessage(AdminID, "Deposit for " + tgID + " was disapproved"));
-                        } else if (messageText.startsWith("reply:")){
+                        } else if (messageText.startsWith("/reply")){
                             int indexOfAnd = messageText.indexOf("&");
                             String tgID = messageText.substring(6, indexOfAnd);
                             String reply = messageText.substring(indexOfAnd, messageText.length());
@@ -158,11 +158,11 @@ public class BotController {
                             bot.execute(new SendMessage(AdminID,"DB was cleaned"));
                         }
                     } else if (messageText.equals("/support") || messageCallbackText.equals("Help")) {
-                        bot.execute(new SendMessage(playerId, "If you have any questions, please review the video first. If you don't find an answer to your question there or if you have a different request, please send a message in the format needReply: *your text*. Please do this in one message, and I'll get back to you as soon as possible."));
-                    } else if (messageText.equals("needReply:")){
+                        bot.execute(new SendMessage(playerId, "⏳ If you have any questions, please review the video first. If you don't find an answer to your question there or if you have a different request, please send a message in the format: <i>/needReply *your text*</i>. \nPlease do this in one message, and I'll get back to you as soon as possible."));
+                    } else if (messageText.equals("/needReply")){
                         String userQuestion = messageText.substring(10, messageText.length());
                         bot.execute(new SendMessage(playerId, "✅ I received your message and will respond to you as soon as possible. Your message: " + userQuestion).parseMode(HTML));
-                        bot.execute(new SendMessage(AdminID, "✅ ID:"+ playerId + " has a question" + userQuestion + " To answer it write a message: <code>reply:111111111&</code> *your text*").parseMode(HTML));
+                        bot.execute(new SendMessage(AdminID, "✅ ID:<code>"+ playerId + "</code> has a question" + userQuestion + " To answer it write a message: <code>/reply111111111&</code> *your text*").parseMode(HTML));
                     } else if (messageText.equals("/start")) {
                         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                         InlineKeyboardButton button32 = new InlineKeyboardButton("Let's start");
