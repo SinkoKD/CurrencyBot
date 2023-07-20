@@ -81,6 +81,7 @@ public class BotController {
                     File videoDepositFile = resourcePath.resolve("depositTutorial.mp4").toFile();
                     File videoRegistrationFile = resourcePath.resolve("videoRegistrationGuide.mp4").toFile();
                     File videoExampleFile = resourcePath.resolve("videoExample.mp4").toFile();
+                    ArrayList<Long> allUsers = new ArrayList<>();
 
                     if (update.callbackQuery() == null && (update.message() == null || update.message().text() == null)) {
                         return;
@@ -147,25 +148,27 @@ public class BotController {
                             inlineKeyboardMarkup.addRow(button7);
                             bot.execute(new SendMessage(tgID, "❌ Something went wrong. Make sure you deposit the new account you created through the link and then click 'Deposit done' ").replyMarkup(inlineKeyboardMarkup));
                             bot.execute(new SendMessage(AdminID, "Deposit for " + tgID + " was disapproved"));
-                        } else if (messageText.startsWith("/reply")){
+                        } else if (messageText.startsWith("reply:")){
                             int indexOfAnd = messageText.indexOf("&");
                             String tgID = messageText.substring(6, indexOfAnd);
-                            String reply = messageText.substring(indexOfAnd);
+                            String reply = messageText.substring(indexOfAnd+1);
                             System.out.println(indexOfAnd+ "\n" +  tgID + "\n" + reply);
                             bot.execute(new SendMessage(tgID, reply));
                             bot.execute(new SendMessage(AdminID,"Reply was sent"));
                         } else if (messageText.equals("/clearDB")){
                             jedis.flushAll();
                             bot.execute(new SendMessage(AdminID,"DB was cleaned"));
+                        } else if (messageText.equals("/getAllUsers")){
+                            bot.execute(new SendMessage(AdminID,"There is" + allUsers.size() + " users right now."));
                         }
-                    } else if (messageText.startsWith("/needReply")){
+                    } else if (messageText.startsWith("needReply:")){
                         String userQuestion = messageText.substring(10);
                         System.out.println("Need reply");
                         bot.execute(new SendMessage(playerId, "✅ I received your message and will respond to you as soon as possible. Your message: " + userQuestion).parseMode(HTML));
-                        bot.execute(new SendMessage(AdminID, "✅ ID:<code>"+ playerId + "</code> has a question" + userQuestion + " To answer it write a message: <code>/reply111111111&</code> *your text*").parseMode(HTML));
+                        bot.execute(new SendMessage(AdminID, "✅ ID:<code>"+ playerId + "</code> has a question" + userQuestion + " To answer it write a message: <code>reply:111111111&</code> *your text*").parseMode(HTML));
                         System.out.println("Really works");
                     } else if (messageText.equals("/support") || messageCallbackText.equals("Help")) {
-                        bot.execute(new SendMessage(playerId, "⏳ If you have any questions, please review the video first. If you don't find an answer to your question there or if you have a different request, please send a message in the format:/needReply *your text*. \nPlease do this in one message, and I'll get back to you as soon as possible."));
+                        bot.execute(new SendMessage(playerId, "⏳ If you have any questions, please review the video first. If you don't find an answer to your question there or if you have a different request, please send a message in the format:<code>needReply:</code> *your text*. \nPlease do this in one message, and I'll get back to you as soon as possible."));
                     }  else if (messageText.equals("/start")) {
                         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                         InlineKeyboardButton button32 = new InlineKeyboardButton("Let's start");
@@ -180,6 +183,9 @@ public class BotController {
                                 "❗\uFE0F If you have any problems or suggestions, you can contact bot support via the /support command.").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                         bot.execute(new SendVideo(playerId, videoExampleFile));
                         bot.execute(new SendMessage(playerId, "☝\uFE0F Here is a video example of how I work.").parseMode(HTML));
+                        if (!allUsers.contains(playerId)){
+                            allUsers.add(playerId);
+                        }
                     } else if (userDeposited(playerId) == true) {
                         if (messageText.equals("Get Signal") || messageCallbackText.equals("getSignal")) {
                             Date date = new Date();
@@ -357,7 +363,7 @@ public class BotController {
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 User user = convertJsonToUser(jedis.get(userKey));
                                 String sendAdminUID = user.getUID();
-                                bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID " + sendAdminUID + " want to register. Write 'A11111111' (telegram id) to approve and 'D1111111' to disapprove").parseMode(HTML));
+                                bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> want to register. Write 'A11111111' (telegram id) to approve and 'D1111111' to disapprove").parseMode(HTML));
                             } else if (messageText.startsWith("/") || messageText.equals("Get Signal")) {
                                 bot.execute(new SendMessage(playerId, "Before trying any signals you need to register"));
                             }
