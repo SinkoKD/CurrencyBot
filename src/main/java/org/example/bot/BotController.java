@@ -161,7 +161,7 @@ public class BotController {
                         bot.execute(new SendMessage(playerId, "If you have any questions, please review the video first. If you don't find an answer to your question there or if you have a different request, please send a message in the format needReply: *your text*. Please do this in one message, and I'll get back to you as soon as possible."));
                     } else if (messageText.equals("needReply:")){
                         String userQuestion = messageText.substring(10, messageText.length());
-                        bot.execute(new SendMessage(playerId, "✅ I received your message and will respond to you as soon as possible. Your message: " + userQuestion));
+                        bot.execute(new SendMessage(playerId, "✅ I received your message and will respond to you as soon as possible. Your message: " + userQuestion).parseMode(HTML));
                         bot.execute(new SendMessage(AdminID, "✅ ID:"+ playerId + " has a question" + userQuestion + " To answer it write a message: <code>reply:111111111&</code> *your text*").parseMode(HTML));
                     } else if (messageText.equals("/start")) {
                         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
