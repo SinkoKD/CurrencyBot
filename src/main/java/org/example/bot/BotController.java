@@ -150,14 +150,15 @@ public class BotController {
                         } else if (messageText.startsWith("/reply")){
                             int indexOfAnd = messageText.indexOf("&");
                             String tgID = messageText.substring(6, indexOfAnd);
-                            String reply = messageText.substring(indexOfAnd, messageText.length());
+                            String reply = messageText.substring(indexOfAnd);
+                            System.out.println(indexOfAnd+ "\n" +  tgID + "\n" + reply);
                             bot.execute(new SendMessage(tgID, reply));
                             bot.execute(new SendMessage(AdminID,"Reply was sent"));
                         } else if (messageText.equals("/clearDB")){
                             jedis.flushAll();
                             bot.execute(new SendMessage(AdminID,"DB was cleaned"));
                         }
-                    } else if (messageText.equals("/needReply")){
+                    } else if (messageText.startsWith("/needReply")){
                         String userQuestion = messageText.substring(10);
                         System.out.println("Need reply");
                         bot.execute(new SendMessage(playerId, "✅ I received your message and will respond to you as soon as possible. Your message: " + userQuestion).parseMode(HTML));
