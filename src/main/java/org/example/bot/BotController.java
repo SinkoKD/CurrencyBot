@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Random;
+import java.util.logging.LogManager;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -79,6 +80,7 @@ public class BotController {
                     File imageFile = resourcePath.resolve("photoChatGPT.jpg").toFile();
                     File videoDepositFile = resourcePath.resolve("depositTutorial.mp4").toFile();
                     File videoRegistrationFile = resourcePath.resolve("videoRegistrationGuide.mp4").toFile();
+                    File videoExampleFile = resourcePath.resolve("videoExample.mp4").toFile();
 
                     if (update.callbackQuery() == null && (update.message() == null || update.message().text() == null)) {
                         return;
@@ -97,13 +99,13 @@ public class BotController {
                     }
 
                     if (String.valueOf(playerId).equals(AdminID)) {
-                        if (messageText.startsWith("Approve")) {
+                        if (messageText.startsWith("A") || messageText.startsWith("a") ) {
                             InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                             InlineKeyboardButton button7 = new InlineKeyboardButton("Deposit done!");
                             button7.callbackData("IDeposit");
                             inlineKeyboardMarkup.addRow(button7);
                             System.out.println(messageText.length());
-                            String tgID = messageText.substring(7, messageText.length());
+                            String tgID = messageText.substring(1, messageText.length());
                             System.out.println(tgID);
                             registrationApprove(Long.parseLong(tgID));
                             bot.execute(new SendMessage(tgID, "✅ Great, your account is confirmed! The last step is to make any deposit by any convenient way. After that press the button 'Deposit done'.\n" +
@@ -114,8 +116,8 @@ public class BotController {
                             bot.execute(new SendVideo(tgID, videoDepositFile));
                             bot.execute(new SendMessage(tgID, "☝\uFE0F Here is a video guide on how to make a deposit.").parseMode(HTML));
                             bot.execute(new SendMessage(AdminID, "Registration for " + tgID + " was approved"));
-                        } else if (messageText.startsWith("Disapprove")) {
-                            String tgID = messageText.substring(10, messageText.length());
+                        } else if (messageText.startsWith("D") || messageText.startsWith("d")) {
+                            String tgID = messageText.substring(1, messageText.length());
                             InlineKeyboardButton button12 = new InlineKeyboardButton("Register here");
                             InlineKeyboardButton button13 = new InlineKeyboardButton("I'm ready!");
                             button12.url("https://bit.ly/ChatGPTtrading");
@@ -126,8 +128,8 @@ public class BotController {
                                     "\n" +
                                     "If you still have problems, then write to support with the command /support. ").replyMarkup(inlineKeyboardMarkup));
                             bot.execute(new SendMessage(AdminID, "Registration for " + tgID + " was disapproved"));
-                        } else if (messageText.startsWith("Deposit")) {
-                            String tgID = messageText.substring(7, messageText.length());
+                        } else if (messageText.startsWith("Y") || messageText.startsWith("y")) {
+                            String tgID = messageText.substring(1, messageText.length());
                             depositApprove(Long.parseLong(tgID));
                             Keyboard replyKeyboardMarkup = (Keyboard) new ReplyKeyboardMarkup(
                                     new String[]{"Get Signal"});
@@ -137,17 +139,30 @@ public class BotController {
                                     "\n" +
                                     "If you have any questions use the /support command.").replyMarkup((com.pengrad.telegrambot.model.request.Keyboard) replyKeyboardMarkup));
                             bot.execute(new SendMessage(AdminID, "Deposit for " + tgID + " was approved"));
-                        } else if (messageText.startsWith("NoDeposit")) {
-                            String tgID = messageText.substring(9, messageText.length());
+                        } else if (messageText.startsWith("N") || messageText.startsWith("n")) {
+                            String tgID = messageText.substring(1, messageText.length());
                             InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                             InlineKeyboardButton button7 = new InlineKeyboardButton("Deposit done");
                             button7.callbackData("IDeposit");
                             inlineKeyboardMarkup.addRow(button7);
                             bot.execute(new SendMessage(tgID, "❌ Something went wrong. Make sure you deposit the new account you created through the link and then click 'Deposit done' ").replyMarkup(inlineKeyboardMarkup));
                             bot.execute(new SendMessage(AdminID, "Deposit for " + tgID + " was disapproved"));
+                        } else if (messageText.startsWith("/reply")){
+                            int indexOfAnd = messageText.indexOf("&");
+                            String tgID = messageText.substring(6, indexOfAnd);
+                            String reply = messageText.substring(indexOfAnd, messageText.length());
+                            bot.execute(new SendMessage(tgID, reply));
+                            bot.execute(new SendMessage(AdminID,"Reply was sent"));
+                        } else if (messageText.equals("/clearDB")){
+                            jedis.flushAll();
+                            bot.execute(new SendMessage(AdminID,"DB was cleaned"));
                         }
-                    } else if (messageText.equals("/help") || messageCallbackText.equals("Help")) {
-                        bot.execute(new SendMessage(playerId, "There will be help"));
+                    } else if (messageText.equals("/support") || messageCallbackText.equals("Help")) {
+                        bot.execute(new SendMessage(playerId, "If you have any questions, please review the video first. If you don't find an answer to your question there or if you have a different request, please send a message in the format /needReply *your text*. Please do this in one message, and I'll get back to you as soon as possible."));
+                    } else if (messageText.equals("/needReply")){
+                        String userQuestion = messageText.substring(10, messageText.length());
+                        bot.execute(new SendMessage(playerId, "✅ I received your message and will respond to you as soon as possible. Your message: " + userQuestion));
+                        bot.execute(new SendMessage(AdminID, "✅ ID:"+ playerId + " has a question" + userQuestion + " To answer it write a message: <code>/reply111111111&</code> *your text*").parseMode(HTML));
                     } else if (messageText.equals("/start")) {
                         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                         InlineKeyboardButton button32 = new InlineKeyboardButton("Let's start");
@@ -160,12 +175,34 @@ public class BotController {
                                 "\uD83D\uDCCA In order to start receiving signals you need to follow a couple of steps. In the beginning, click on 'Let's start'.\n" +
                                 "\n" +
                                 "❗\uFE0F If you have any problems or suggestions, you can contact bot support via the /support command.").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
+                        bot.execute(new SendVideo(playerId, videoExampleFile));
+                        bot.execute(new SendMessage(playerId, "☝\uFE0F Here is a video example of how I work.").parseMode(HTML));
                     } else if (userDeposited(playerId) == true) {
                         if (messageText.equals("Get Signal") || messageCallbackText.equals("getSignal")) {
                             Date date = new Date();
                             ArrayList<String> listOfPairs = new ArrayList<>();
                             if (date.getDay() == 0 || date.getDay() == 1) {
                                 listOfPairs.add("AUD/CAD OTC");
+                                listOfPairs.add("AUD/CHF OTC");
+                                listOfPairs.add("AUD/NZD OTC");
+                                listOfPairs.add("CAD/CHF OTC");
+                                listOfPairs.add("EUR/CHF OTC");
+                                listOfPairs.add("EUR/JPY OTC");
+                                listOfPairs.add("EUR/USD OTC");
+                                listOfPairs.add("GBP/JPY OTC");
+                                listOfPairs.add("NZD/JPY OTC");
+                                listOfPairs.add("NZD/USD OTC");
+                                listOfPairs.add("USD/CAD OTC");
+                                listOfPairs.add("USD/CNH OTC");
+                                listOfPairs.add("CHF/NOK OTC");
+                                listOfPairs.add("EUR/GBP OTC");
+                                listOfPairs.add("EUR/TRY OTC");
+                                listOfPairs.add("CHF/JPY OTC");
+                                listOfPairs.add("EUR/NZD OTC");
+                                listOfPairs.add("AUD/JPY OTC");
+                                listOfPairs.add("AUD/USD OTC");
+                                listOfPairs.add("EUR/HUF OTC");
+                                listOfPairs.add("USD/CHF OTC");
                             } else {
                                 listOfPairs.add("AUD/CAD OTC");
                                 listOfPairs.add("AUD/CHF OTC");
@@ -188,31 +225,31 @@ public class BotController {
                                 listOfPairs.add("AUD/USD OTC");
                                 listOfPairs.add("EUR/HUF OTC");
                                 listOfPairs.add("USD/CHF OTC");
-                                listOfPairs.add("EUR/JPY");
-                                listOfPairs.add("GBP/JPY");
-                                listOfPairs.add("AUD/CAD");
-                                listOfPairs.add("AUD/JPY");
-                                listOfPairs.add("AUD/USD");
-                                listOfPairs.add("CAD/CHF");
-                                listOfPairs.add("CAD/JPY");
-                                listOfPairs.add("CHF/JPY");
-                                listOfPairs.add("EUR/AUD");
-                                listOfPairs.add("EUR/CAD");
-                                listOfPairs.add("EUR/CHF");
-                                listOfPairs.add("EUR/GBP");
-                                listOfPairs.add("EUR/USD");
-                                listOfPairs.add("GBP/CAD");
-                                listOfPairs.add("GBP/CHF");
-                                listOfPairs.add("GBP/USD");
-                                listOfPairs.add("USD/CAD");
-                                listOfPairs.add("USD/CHF");
-                                listOfPairs.add("GBP/USD");
-                                listOfPairs.add("USD/CAD");
-                                listOfPairs.add("USD/CHF");
-                                listOfPairs.add("GBP/AUD");
-                                listOfPairs.add("USD/JPY");
-                                listOfPairs.add("USD/CNH");
-                                listOfPairs.add("AUD/CHF");
+//                                listOfPairs.add("EUR/JPY");
+//                                listOfPairs.add("GBP/JPY");
+//                                listOfPairs.add("AUD/CAD");
+//                                listOfPairs.add("AUD/JPY");
+//                                listOfPairs.add("AUD/USD");
+//                                listOfPairs.add("CAD/CHF");
+//                                listOfPairs.add("CAD/JPY");
+//                                listOfPairs.add("CHF/JPY");
+//                                listOfPairs.add("EUR/AUD");
+//                                listOfPairs.add("EUR/CAD");
+//                                listOfPairs.add("EUR/CHF");
+//                                listOfPairs.add("EUR/GBP");
+//                                listOfPairs.add("EUR/USD");
+//                                listOfPairs.add("GBP/CAD");
+//                                listOfPairs.add("GBP/CHF");
+//                                listOfPairs.add("GBP/USD");
+//                                listOfPairs.add("USD/CAD");
+//                                listOfPairs.add("USD/CHF");
+//                                listOfPairs.add("GBP/USD");
+//                                listOfPairs.add("USD/CAD");
+//                                listOfPairs.add("USD/CHF");
+//                                listOfPairs.add("GBP/AUD");
+//                                listOfPairs.add("USD/JPY");
+//                                listOfPairs.add("USD/CNH");
+//                                listOfPairs.add("AUD/CHF");
                             }
                             bot.execute(new SendMessage(playerId, "⌛\uFE0F Looking for the best pair...").parseMode(HTML));
                             try {
@@ -229,11 +266,11 @@ public class BotController {
                             } else {
                                 direction = "⬇\uFE0F Direction: <b>DOWN</b> ";
                             }
-                            int randomAccuracy = random.nextInt(27) + 70;
+                            int randomAccuracy = random.nextInt(28) + 70;
                             int randomAddTime = random.nextInt(10000) + 8000;
                             // int randomTime = 1;
-                            //   int randomTime = random.nextInt(userDBMap.get(String.valueOf(playerId)).getMaxTimeDeal() - userDBMap.get(String.valueOf(playerId)).getMinTimeDeal()) + userDBMap.get(String.valueOf(playerId)).getMinTimeDeal();
-                            int randomTime = random.nextInt(3) + 1;
+                            // int randomTime = random.nextInt(userDBMap.get(String.valueOf(playerId)).getMaxTimeDeal() - userDBMap.get(String.valueOf(playerId)).getMinTimeDeal()) + userDBMap.get(String.valueOf(playerId)).getMinTimeDeal();
+                            int randomTime = random.nextInt(5) + 1;
                             String pickedPair = listOfPairs.get(randomNumber);
                             EditMessageText editMessageText = new EditMessageText(playerId, messageId + 1, "Pair <b>" + pickedPair + "</b> has been picked. I am conducting an analysis on it.").parseMode(HTML);
                             bot.execute(editMessageText);
@@ -261,7 +298,7 @@ public class BotController {
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 User checkedUser = convertJsonToUser(jedis.get(userKey));
                                 String sendAdminUID = checkedUser.getUID();
-                                bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> deposited. Write 'Deposit11111111' (telegram id) to approve and 'NoDeposit1111111' to disapprove").parseMode(HTML));
+                                bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> deposited. Write 'Y11111111' (telegram id) to approve and 'N1111111' to disapprove").parseMode(HTML));
                             } else if (messageText.startsWith("/") || messageText.equals("Get Signal")) {
                                 bot.execute(new SendMessage(playerId, "Before trying any signals you need to deposit"));
                             }
@@ -286,7 +323,7 @@ public class BotController {
                                 bot.execute(new SendMessage(playerId, "☝\uFE0F Here is a video guide on how to register.").parseMode(HTML));
                             } else if (messageCallbackText.equals("ImRegistered")) {
                                 bot.execute(new SendMessage(playerId, "✅ Good job! Now send me your Pocket Option ID in format 'ID12345678'.").parseMode(HTML));
-                            } else if (messageText.startsWith("ID") && messageText.length() == 10 || messageText.length() == 11) {
+                            } else if (messageText.startsWith("ID") || messageText.startsWith("id") || messageText.startsWith("Id") || messageText.startsWith("iD") && messageText.length() == 10 || messageText.length() == 11) {
                                 InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                                 InlineKeyboardButton button5 = new InlineKeyboardButton("Yes");
                                 InlineKeyboardButton button6 = new InlineKeyboardButton("No");
@@ -299,12 +336,25 @@ public class BotController {
                                 bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Your ID is " + uid + " is it correct?").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 jedis.set(userKey, convertUserToJson(newUser));
+                            } else if (messageText.startsWith("user") || messageText.startsWith("USER") && messageText.length() == 12 || messageText.length() == 13) {
+                                InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+                                InlineKeyboardButton button5 = new InlineKeyboardButton("Yes");
+                                InlineKeyboardButton button6 = new InlineKeyboardButton("No");
+                                button5.callbackData("YesIM");
+                                button6.callbackData("ImRegistered");
+                                inlineKeyboardMarkup.addRow(button5, button6);
+                                String text = messageText.replaceAll("\\s", "");
+                                uid = text.substring(4, 12);
+                                User newUser = new User(playerName, uid, false, false);
+                                bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Your ID is " + uid + " is it correct?").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
+                                String userKey = USER_DB_MAP_KEY + ":" + playerId;
+                                jedis.set(userKey, convertUserToJson(newUser));
                             } else if (messageCallbackText.equals("YesIM")) {
                                 bot.execute(new SendMessage(playerId, "⏳ Great, your UID will be verified soon"));
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 User user = convertJsonToUser(jedis.get(userKey));
                                 String sendAdminUID = user.getUID();
-                                bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID " + sendAdminUID + " want to register. Write 'Approve11111111' (telegram id) to approve and 'Disapprove1111111' to disapprove").parseMode(HTML));
+                                bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID " + sendAdminUID + " want to register. Write 'A11111111' (telegram id) to approve and 'D1111111' to disapprove").parseMode(HTML));
                             } else if (messageText.startsWith("/") || messageText.equals("Get Signal")) {
                                 bot.execute(new SendMessage(playerId, "Before trying any signals you need to register"));
                             }
