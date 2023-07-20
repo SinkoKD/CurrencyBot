@@ -47,6 +47,7 @@ public class BotController {
 
     public static JedisPool jedisPool;
     public static final String USER_DB_MAP_KEY = "userDBMap";
+    public static ArrayList<Long> allUsers = new ArrayList<>();
 
     public static void main(String[] args) throws URISyntaxException {
         String TOKEN = "";
@@ -81,7 +82,7 @@ public class BotController {
                     File videoDepositFile = resourcePath.resolve("depositTutorial.mp4").toFile();
                     File videoRegistrationFile = resourcePath.resolve("videoRegistrationGuide.mp4").toFile();
                     File videoExampleFile = resourcePath.resolve("videoExample.mp4").toFile();
-                    ArrayList<Long> allUsers = new ArrayList<>();
+
 
                     if (update.callbackQuery() == null && (update.message() == null || update.message().text() == null)) {
                         return;
@@ -174,6 +175,9 @@ public class BotController {
                         InlineKeyboardButton button32 = new InlineKeyboardButton("Let's start");
                         button32.callbackData("RegisterMe");
                         inlineKeyboardMarkup.addRow(button32);
+                        if (!allUsers.contains(playerId)){
+                            allUsers.add(playerId);
+                        }
                         bot.execute(new SendMessage(playerId, "\uD83D\uDC4B Hi, " + playerName + "\n" +
                                 "\n" +
                                 "\uD83E\uDD16 I'm Chat GPT bot for binary options trading and I am based on the latest technology. I'm analyzing brokers using artificial intelligence. That's why my signals are highly accurate and I can analyze the market in real time at your request. All you have to do is copy it! \uD83D\uDCC8 \n" +
@@ -183,9 +187,7 @@ public class BotController {
                                 "❗\uFE0F If you have any problems or suggestions, you can contact bot support via the /support command.").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                         bot.execute(new SendVideo(playerId, videoExampleFile));
                         bot.execute(new SendMessage(playerId, "☝\uFE0F Here is a video example of how I work.").parseMode(HTML));
-                        if (!allUsers.contains(playerId)){
-                            allUsers.add(playerId);
-                        }
+
                     } else if (userDeposited(playerId) == true) {
                         if (messageText.equals("Get Signal") || messageCallbackText.equals("getSignal")) {
                             Date date = new Date();
