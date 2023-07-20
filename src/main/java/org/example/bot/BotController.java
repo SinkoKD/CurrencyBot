@@ -157,15 +157,15 @@ public class BotController {
                             jedis.flushAll();
                             bot.execute(new SendMessage(AdminID,"DB was cleaned"));
                         }
-                    } else if (messageText.equals("/support") || messageCallbackText.equals("Help")) {
-                        bot.execute(new SendMessage(playerId, "⏳ If you have any questions, please review the video first. If you don't find an answer to your question there or if you have a different request, please send a message in the format:/needReply *your text*. \nPlease do this in one message, and I'll get back to you as soon as possible."));
                     } else if (messageText.equals("/needReply")){
-                        String userQuestion = messageText.substring(10, messageText.length());
+                        String userQuestion = messageText.substring(10);
                         System.out.println("Need reply");
                         bot.execute(new SendMessage(playerId, "✅ I received your message and will respond to you as soon as possible. Your message: " + userQuestion).parseMode(HTML));
                         bot.execute(new SendMessage(AdminID, "✅ ID:<code>"+ playerId + "</code> has a question" + userQuestion + " To answer it write a message: <code>/reply111111111&</code> *your text*").parseMode(HTML));
                         System.out.println("Really works");
-                    } else if (messageText.equals("/start")) {
+                    } else if (messageText.equals("/support") || messageCallbackText.equals("Help")) {
+                        bot.execute(new SendMessage(playerId, "⏳ If you have any questions, please review the video first. If you don't find an answer to your question there or if you have a different request, please send a message in the format:/needReply *your text*. \nPlease do this in one message, and I'll get back to you as soon as possible."));
+                    }  else if (messageText.equals("/start")) {
                         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                         InlineKeyboardButton button32 = new InlineKeyboardButton("Let's start");
                         button32.callbackData("RegisterMe");
