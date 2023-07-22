@@ -21,6 +21,9 @@ public class User implements Serializable {
         this.deposited = deposited;
     }
 
+    public User() {
+    }
+
     public User(String name, String UID, boolean registered, boolean deposited) {
         this.name = name;
         this.UID = UID;

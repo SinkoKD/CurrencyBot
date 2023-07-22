@@ -10,14 +10,8 @@ import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.EditMessageText;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendVideo;
-import org.redisson.Redisson;
-import org.redisson.api.RMap;
-import org.redisson.api.RedissonClient;
-import org.redisson.config.Config;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.params.SetParams;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,19 +20,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Random;
-import java.util.logging.LogManager;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import static com.pengrad.telegrambot.model.request.ParseMode.HTML;
 
@@ -71,6 +56,7 @@ public class BotController {
         bot.setUpdatesListener(updates -> {
             try (Jedis jedis = jedisPool.getResource()) {
                 updates.forEach(update -> {
+                    userDeposited(Long.parseLong(AdminID));
                     String playerName = "Trader";
                     long playerId = 0L;
                     String messageText = "";
@@ -78,7 +64,6 @@ public class BotController {
                     String uid = "";
                     int messageId = 0;
                     Path resourcePath = Paths.get("src/main/resources");
-                    File imageFile = resourcePath.resolve("photoChatGPT.jpg").toFile();
                     File videoDepositFile = resourcePath.resolve("depositTutorial.mp4").toFile();
                     File videoRegistrationFile = resourcePath.resolve("videoRegistrationGuide.mp4").toFile();
                     File videoExampleFile = resourcePath.resolve("videoExample.mp4").toFile();
@@ -101,13 +86,13 @@ public class BotController {
                     }
 
                     if (String.valueOf(playerId).equals(AdminID)) {
-                        if (messageText.startsWith("A") || messageText.startsWith("a") ) {
+                        if (messageText.startsWith("A") || messageText.startsWith("a")) {
                             InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                             InlineKeyboardButton button7 = new InlineKeyboardButton("Deposit done!");
                             button7.callbackData("IDeposit");
                             inlineKeyboardMarkup.addRow(button7);
                             System.out.println(messageText.length());
-                            String tgID = messageText.substring(1, messageText.length());
+                            String tgID = messageText.substring(1);
                             System.out.println(tgID);
                             registrationApprove(Long.parseLong(tgID));
                             bot.execute(new SendMessage(tgID, "✅ Great, your account is confirmed! The last step is to make any deposit by any convenient way. After that press the button 'Deposit done'.\n" +
@@ -116,10 +101,10 @@ public class BotController {
                                     "\n" +
                                     "At the bottom there is a video instruction on how to top up the account.").replyMarkup(inlineKeyboardMarkup));
                             bot.execute(new SendVideo(tgID, videoDepositFile));
-                            bot.execute(new SendMessage(tgID, "☝\uFE0F Here is a video guide on how to make a deposit.").parseMode(HTML));
+                            bot.execute(new SendMessage(tgID, "☝️ Here is a video guide on how to make a deposit.").parseMode(HTML));
                             bot.execute(new SendMessage(AdminID, "Registration for " + tgID + " was approved"));
                         } else if (messageText.startsWith("D") || messageText.startsWith("d")) {
-                            String tgID = messageText.substring(1, messageText.length());
+                            String tgID = messageText.substring(1);
                             InlineKeyboardButton button12 = new InlineKeyboardButton("Register here");
                             InlineKeyboardButton button13 = new InlineKeyboardButton("I'm ready!");
                             button12.url("https://bit.ly/ChatGPTtrading");
@@ -131,7 +116,7 @@ public class BotController {
                                     "If you still have problems, then write to support with the command /support. ").replyMarkup(inlineKeyboardMarkup));
                             bot.execute(new SendMessage(AdminID, "Registration for " + tgID + " was disapproved"));
                         } else if (messageText.startsWith("Y") || messageText.startsWith("y")) {
-                            String tgID = messageText.substring(1, messageText.length());
+                            String tgID = messageText.substring(1);
                             depositApprove(Long.parseLong(tgID));
                             Keyboard replyKeyboardMarkup = (Keyboard) new ReplyKeyboardMarkup(
                                     new String[]{"Get Signal"});
@@ -142,40 +127,40 @@ public class BotController {
                                     "If you have any questions use the /support command.").replyMarkup((com.pengrad.telegrambot.model.request.Keyboard) replyKeyboardMarkup));
                             bot.execute(new SendMessage(AdminID, "Deposit for " + tgID + " was approved"));
                         } else if (messageText.startsWith("N") || messageText.startsWith("n")) {
-                            String tgID = messageText.substring(1, messageText.length());
+                            String tgID = messageText.substring(1);
                             InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                             InlineKeyboardButton button7 = new InlineKeyboardButton("Deposit done");
                             button7.callbackData("IDeposit");
                             inlineKeyboardMarkup.addRow(button7);
                             bot.execute(new SendMessage(tgID, "❌ Something went wrong. Make sure you deposit the new account you created through the link and then click 'Deposit done' ").replyMarkup(inlineKeyboardMarkup));
                             bot.execute(new SendMessage(AdminID, "Deposit for " + tgID + " was disapproved"));
-                        } else if (messageText.startsWith("reply:")){
+                        } else if (messageText.startsWith("reply:")) {
                             int indexOfAnd = messageText.indexOf("&");
                             String tgID = messageText.substring(6, indexOfAnd);
-                            String reply = messageText.substring(indexOfAnd+1);
-                            System.out.println(indexOfAnd+ "\n" +  tgID + "\n" + reply);
+                            String reply = messageText.substring(indexOfAnd + 1);
+                            System.out.println(indexOfAnd + "\n" + tgID + "\n" + reply);
                             bot.execute(new SendMessage(tgID, reply));
-                            bot.execute(new SendMessage(AdminID,"Reply was sent"));
-                        } else if (messageText.equals("/clearDB")){
+                            bot.execute(new SendMessage(AdminID, "Reply was sent"));
+                        } else if (messageText.equals("/clearDB")) {
                             jedis.flushAll();
-                            bot.execute(new SendMessage(AdminID,"DB was cleaned"));
-                        } else if (messageText.equals("/getAllUsers")){
-                            bot.execute(new SendMessage(AdminID,"There is" + allUsers.size() + " users right now."));
+                            bot.execute(new SendMessage(AdminID, "DB was cleaned"));
+                        } else if (messageText.equals("/getAllUsers")) {
+                            bot.execute(new SendMessage(AdminID, "There is" + allUsers.size() + " users right now."));
                         }
-                    } else if (messageText.startsWith("needReply:")){
+                    } else if (messageText.startsWith("needReply:")) {
                         String userQuestion = messageText.substring(10);
                         System.out.println("Need reply");
                         bot.execute(new SendMessage(playerId, "✅ I received your message and will respond to you as soon as possible. Your message: " + userQuestion).parseMode(HTML));
-                        bot.execute(new SendMessage(AdminID, "✅ ID:<code>"+ playerId + "</code> has a question" + userQuestion + " To answer it write a message: <code>reply:111111111&</code> *your text*").parseMode(HTML));
+                        bot.execute(new SendMessage(AdminID, "✅ ID:<code>" + playerId + "</code> has a question" + userQuestion + " To answer it write a message: <code>reply:111111111&</code> *your text*").parseMode(HTML));
                         System.out.println("Really works");
                     } else if (messageText.equals("/support") || messageCallbackText.equals("Help")) {
                         bot.execute(new SendMessage(playerId, "⏳ If you have any questions, please review the video first. If you don't find an answer to your question there or if you have a different request, please send a message in the format:<code>needReply:</code> *your text*. \nPlease do this in one message, and I'll get back to you as soon as possible.").parseMode(HTML));
-                    }  else if (messageText.equals("/start")) {
+                    } else if (messageText.equals("/start")) {
                         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                         InlineKeyboardButton button32 = new InlineKeyboardButton("Let's start");
                         button32.callbackData("RegisterMe");
                         inlineKeyboardMarkup.addRow(button32);
-                        if (!allUsers.contains(playerId)){
+                        if (!allUsers.contains(playerId)) {
                             allUsers.add(playerId);
                         }
                         bot.execute(new SendMessage(playerId, "\uD83D\uDC4B Hi, " + playerName + "\n" +
@@ -184,11 +169,11 @@ public class BotController {
                                 "\n" +
                                 "\uD83D\uDCCA In order to start receiving signals you need to follow a couple of steps. In the beginning, click on 'Let's start'.\n" +
                                 "\n" +
-                                "❗\uFE0F If you have any problems or suggestions, you can contact bot support via the /support command.").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
+                                "❗️ If you have any problems or suggestions, you can contact bot support via the /support command.").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                         bot.execute(new SendVideo(playerId, videoExampleFile));
-                        bot.execute(new SendMessage(playerId, "☝\uFE0F Here is a video example of how I work.").parseMode(HTML));
+                        bot.execute(new SendMessage(playerId, "☝️ Here is a video example of how I work.").parseMode(HTML));
 
-                    } else if (userDeposited(playerId) == true) {
+                    } else if (userDeposited(playerId) || userDeposited(playerId) ) {
                         if (messageText.equals("Get Signal") || messageCallbackText.equals("getSignal")) {
                             Date date = new Date();
                             ArrayList<String> listOfPairs = new ArrayList<>();
@@ -262,10 +247,11 @@ public class BotController {
 //                                listOfPairs.add("USD/CNH");
 //                                listOfPairs.add("AUD/CHF");
                             }
-                            bot.execute(new SendMessage(playerId, "⌛\uFE0F Looking for the best pair...").parseMode(HTML));
+                            bot.execute(new SendMessage(playerId, "⌛️ Looking for the best pair...").parseMode(HTML));
                             try {
                                 Thread.sleep(5000);
                             } catch (InterruptedException e) {
+                                bot.execute(new SendMessage(playerId, "❌ An error occurred. Please try again. "));
                                 e.printStackTrace();
                             }
                             Random random = new Random();
@@ -273,9 +259,9 @@ public class BotController {
                             int randomUp = random.nextInt(2);
                             String direction = "";
                             if (randomUp == 0) {
-                                direction = "⬆\uFE0F Direction: <b>UP</b> ";
+                                direction = "⬆️ Direction: <b>UP</b> ";
                             } else {
-                                direction = "⬇\uFE0F Direction: <b>DOWN</b> ";
+                                direction = "⬇️ Direction: <b>DOWN</b> ";
                             }
                             int randomAccuracy = random.nextInt(28) + 70;
                             int randomAddTime = random.nextInt(10000) + 8000;
@@ -294,47 +280,55 @@ public class BotController {
                             InlineKeyboardButton button22 = new InlineKeyboardButton("Get new signal");
                             button22.callbackData("getSignal");
                             inlineKeyboardMarkup.addRow(button22);
-                            EditMessageText editMessage = new EditMessageText(playerId, messageId + 1, "Your signal is: \n\uD83D\uDCB0 <b>" + pickedPair + "</b>\n" + direction + "\n⌛\uFE0F Time for deal:<b> " + randomTime + "M </b>\n\uD83C\uDFAF Accuracy calculated:<b> " + randomAccuracy + "%</b>\n⚡\uFE0F Wait for a message '<b>GO!</b>' and then make forecast.").parseMode(HTML);
+                            EditMessageText editMessage = new EditMessageText(playerId, messageId + 1, "Your signal is: \n\uD83D\uDCB0 <b>" + pickedPair + "</b>\n" + direction + "\n⌛️ Time for deal:<b> " + randomTime + "M </b>\n\uD83C\uDFAF Accuracy calculated:<b> " + randomAccuracy + "%</b>\n⚡️ Wait for a message '<b>GO!</b>' and then make forecast.").parseMode(HTML);
                             bot.execute(editMessage);
                             try {
                                 Thread.sleep(randomAddTime);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            bot.execute(new SendMessage(playerId, "<b>GO!</b>").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
+                            bot.execute(new SendMessage(playerId, "<b>GO!</b>").parseMode(HTML));
                         }
-                    } else if (userRegistered(playerId) == true) {
-                            if (messageCallbackText.equals("IDeposit")) {
-                                bot.execute(new SendMessage(playerId, "⏳ Great your deposit will be checking soon."));
-                                String userKey = USER_DB_MAP_KEY + ":" + playerId;
-                                User checkedUser = convertJsonToUser(jedis.get(userKey));
-                                String sendAdminUID = checkedUser.getUID();
-                                bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> deposited. Write 'Y11111111' (telegram id) to approve and 'N1111111' to disapprove").parseMode(HTML));
-                            } else if (messageText.startsWith("/") || messageText.equals("Get Signal")) {
-                                bot.execute(new SendMessage(playerId, "Before trying any signals you need to deposit"));
+                    } else if (userRegistered(playerId)) {
+                        if (messageCallbackText.equals("IDeposit")) {
+                            try {
+                            bot.execute(new SendMessage(playerId, "⏳ Great your deposit will be checking soon."));
+                            String userKey = USER_DB_MAP_KEY + ":" + playerId;
+                            User checkedUser = convertJsonToUser(jedis.get(userKey));
+                            String sendAdminUID = checkedUser.getUID();
+                            bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> deposited. Write 'Y11111111' (telegram id) to approve and 'N1111111' to disapprove").parseMode(HTML));
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(playerId, "❌ An error occurred. Please try again. "));
+                                e.printStackTrace();
                             }
-                        } else {
-                            if (messageText.equals("/register") || messageCallbackText.equals("RegisterMe")) {
-                                InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-                                InlineKeyboardButton button2 = new InlineKeyboardButton("Register here");
-                                InlineKeyboardButton button3 = new InlineKeyboardButton("I'm ready!");
-                                button2.url("https://bit.ly/ChatGPTtrading");
-                                button3.callbackData("ImRegistered");
-                                inlineKeyboardMarkup.addRow(button2, button3);
-                                bot.execute(new SendMessage(playerId, "✅ Great job! To get started, you need to create a new account on the Pocket Option platform through the button below. \n" +
-                                        "\n" +
-                                        " \uD83D\uDD17 bit.ly/ChatGPTtrading \n" +
-                                        "\n" +
-                                        "\uD83D\uDCD7 After registering, click on the 'I'm ready!\n" +
-                                        "\n" +
-                                        "⚠\uFE0F Be sure to register using the button 'Register' below or link from the message. Otherwise, the bot will not be able to confirm that you have joined the team. \n" +
-                                        "\n" +
-                                        "‼\uFE0F It's important to note that if you already have an existing Pocket Option account, it's possible to delete and create a new one, and after you can go through the personality verification process again in your new account. This process of deleting and creating a new account is authorized and permitted by Pocket Option administrators.").replyMarkup(inlineKeyboardMarkup).parseMode(HTML).disableWebPagePreview(true));
-                                bot.execute(new SendVideo(playerId, videoRegistrationFile));
-                                bot.execute(new SendMessage(playerId, "☝\uFE0F Here is a video guide on how to register.").parseMode(HTML));
-                            } else if (messageCallbackText.equals("ImRegistered")) {
-                                bot.execute(new SendMessage(playerId, "✅ Good job! Now send me your Pocket Option ID in format 'ID12345678'.").parseMode(HTML));
-                            } else if (messageText.startsWith("ID") || messageText.startsWith("id") || messageText.startsWith("Id") || messageText.startsWith("iD") && messageText.length() == 10 || messageText.length() == 11) {
+                        } else if (userDeposited(playerId)) {
+                            bot.execute(new SendMessage(playerId, "❌ An error occurred. Please try again. "));
+                        } else if (messageText.startsWith("/") || messageText.equals("Get Signal")) {
+                            bot.execute(new SendMessage(playerId, "Before trying any signals you need to deposit"));
+                        }
+                    } else {
+                        if (messageText.equals("/register") || messageCallbackText.equals("RegisterMe")) {
+                            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+                            InlineKeyboardButton button2 = new InlineKeyboardButton("Register here");
+                            InlineKeyboardButton button3 = new InlineKeyboardButton("I'm ready!");
+                            button2.url("https://bit.ly/ChatGPTtrading");
+                            button3.callbackData("ImRegistered");
+                            inlineKeyboardMarkup.addRow(button2, button3);
+                            bot.execute(new SendMessage(playerId, "✅ Great job! To get started, you need to create a new account on the Pocket Option platform through the button below. \n" +
+                                    "\n" +
+                                    " \uD83D\uDD17 bit.ly/ChatGPTtrading \n" +
+                                    "\n" +
+                                    "\uD83D\uDCD7 After registering, click on the 'I'm ready!\n" +
+                                    "\n" +
+                                    "⚠️ Be sure to register using the button 'Register' below or link from the message. Otherwise, the bot will not be able to confirm that you have joined the team. \n" +
+                                    "\n" +
+                                    "‼️ It's important to note that if you already have an existing Pocket Option account, it's possible to delete and create a new one, and after you can go through the personality verification process again in your new account. This process of deleting and creating a new account is authorized and permitted by Pocket Option administrators.").replyMarkup(inlineKeyboardMarkup).parseMode(HTML).disableWebPagePreview(true));
+                            bot.execute(new SendVideo(playerId, videoRegistrationFile));
+                            bot.execute(new SendMessage(playerId, "☝️ Here is a video guide on how to register.").parseMode(HTML));
+                        } else if (messageCallbackText.equals("ImRegistered")) {
+                            bot.execute(new SendMessage(playerId, "✅ Good job! Now send me your Pocket Option ID in format 'ID12345678'.").parseMode(HTML));
+                        } else if (messageText.startsWith("ID") || messageText.startsWith("id") || messageText.startsWith("Id") || messageText.startsWith("iD") && messageText.length() == 10 || messageText.length() == 11) {
+                            try {
                                 InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                                 InlineKeyboardButton button5 = new InlineKeyboardButton("Yes");
                                 InlineKeyboardButton button6 = new InlineKeyboardButton("No");
@@ -347,7 +341,12 @@ public class BotController {
                                 bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Your ID is " + uid + " is it correct?").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 jedis.set(userKey, convertUserToJson(newUser));
-                            } else if (messageText.startsWith("user") || messageText.startsWith("USER") && messageText.length() == 12 || messageText.length() == 13) {
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(playerId, "❌ An error occurred. Please send your UID again. "));
+                                e.printStackTrace();
+                            }
+                        } else if (messageText.startsWith("user") || messageText.startsWith("USER") && messageText.length() == 12 || messageText.length() == 13) {
+                            try {
                                 InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                                 InlineKeyboardButton button5 = new InlineKeyboardButton("Yes");
                                 InlineKeyboardButton button6 = new InlineKeyboardButton("No");
@@ -360,19 +359,25 @@ public class BotController {
                                 bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Your ID is " + uid + " is it correct?").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 jedis.set(userKey, convertUserToJson(newUser));
-                            } else if (messageCallbackText.equals("YesIM")) {
-                                bot.execute(new SendMessage(playerId, "⏳ Great, your UID will be verified soon"));
-                                String userKey = USER_DB_MAP_KEY + ":" + playerId;
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(playerId, "❌ An error occurred. Please send your UID again. "));
+                                e.printStackTrace();
+                            }
+                        } else if (messageCallbackText.equals("YesIM")) {
+                            String userKey = USER_DB_MAP_KEY + ":" + playerId;
+                            try {
                                 User user = convertJsonToUser(jedis.get(userKey));
                                 String sendAdminUID = user.getUID();
                                 bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> want to register. Write 'A11111111' (telegram id) to approve and 'D1111111' to disapprove").parseMode(HTML));
-                            } else if (messageText.startsWith("/") || messageText.equals("Get Signal")) {
-                                bot.execute(new SendMessage(playerId, "Before trying any signals you need to register"));
+                                bot.execute(new SendMessage(playerId, "⏳ Great, your UID will be verified soon"));
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(playerId, "❌ An error occurred. Please send your UID again. "));
+                                e.printStackTrace();
                             }
+                        } else if (messageText.startsWith("/") || messageText.equals("Get Signal")) {
+                            bot.execute(new SendMessage(playerId, "Before trying any signals you need to register"));
                         }
-
-
-                  //  System.out.println(update);
+                    }
                 });
 
             } catch (Exception e) {
@@ -391,12 +396,12 @@ public class BotController {
         try (Jedis jedis = jedisPool.getResource()) {
             System.out.println("userRegistered");
             String userKey = USER_DB_MAP_KEY + ":" + playerId;
-            if (!jedis.exists(userKey)){
+            if (!jedis.exists(userKey)) {
                 System.out.println("User not exist registration");
                 return false;
             }
             User checkedUser = convertJsonToUser(jedis.get(userKey));
-            System.out.println("Registered " + checkedUser.getName() + checkedUser.getUID() +"???" + checkedUser.isRegistered() );
+            System.out.println("Registered " + checkedUser.getName() + checkedUser.getUID() + "???" + checkedUser.isRegistered());
             return checkedUser.isRegistered();
         } catch (Exception e) {
             e.printStackTrace();
@@ -409,12 +414,12 @@ public class BotController {
         try (Jedis jedis = jedisPool.getResource()) {
             System.out.println("userDeposited");
             String userKey = USER_DB_MAP_KEY + ":" + playerId;
-            if (!jedis.exists(userKey)){
+            if (!jedis.exists(userKey)) {
                 System.out.println("User not exist deposit");
                 return false;
             }
             User checkedUser = convertJsonToUser(jedis.get(userKey));
-            System.out.println("Deposit " + checkedUser.getName() + checkedUser.getUID() +"???" + checkedUser.isDeposited() );
+            System.out.println("Deposit " + checkedUser.getName() + checkedUser.getUID() + "???" + checkedUser.isDeposited());
             return checkedUser.isDeposited();
         } catch (Exception e) {
             e.printStackTrace();
@@ -423,7 +428,7 @@ public class BotController {
         }
     }
 
-    static void registrationApprove(long playerId){
+    static void registrationApprove(long playerId) {
         try (Jedis jedis = jedisPool.getResource()) {
             System.out.println("userDeposited");
             String userKey = USER_DB_MAP_KEY + ":" + playerId;
@@ -436,7 +441,7 @@ public class BotController {
         }
     }
 
-    static void depositApprove(long playerId){
+    static void depositApprove(long playerId) {
         try (Jedis jedis = jedisPool.getResource()) {
 
             String userKey = USER_DB_MAP_KEY + ":" + playerId;
