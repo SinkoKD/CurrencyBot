@@ -20,10 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 
 import static com.pengrad.telegrambot.model.request.ParseMode.HTML;
 
@@ -56,18 +53,16 @@ public class BotController {
         bot.setUpdatesListener(updates -> {
             try (Jedis jedis = jedisPool.getResource()) {
                 updates.forEach(update -> {
-                    userDeposited(Long.parseLong(AdminID));
                     String playerName = "Trader";
-                    long playerId = 0L;
+                    long playerId;
                     String messageText = "";
                     String messageCallbackText = "";
                     String uid = "";
-                    int messageId = 0;
+                    int messageId;
                     Path resourcePath = Paths.get("src/main/resources");
                     File videoDepositFile = resourcePath.resolve("depositTutorial.mp4").toFile();
                     File videoRegistrationFile = resourcePath.resolve("videoRegistrationGuide.mp4").toFile();
                     File videoExampleFile = resourcePath.resolve("videoExample.mp4").toFile();
-
 
                     if (update.callbackQuery() == null && (update.message() == null || update.message().text() == null)) {
                         return;
@@ -83,6 +78,9 @@ public class BotController {
                         playerId = update.callbackQuery().from().id();
                         messageCallbackText = update.callbackQuery().data();
                         messageId = update.callbackQuery().message().messageId();
+                    } else {
+                        messageId = 0;
+                        playerId = 0L;
                     }
 
                     if (String.valueOf(playerId).equals(AdminID)) {
@@ -145,7 +143,7 @@ public class BotController {
                             jedis.flushAll();
                             bot.execute(new SendMessage(AdminID, "DB was cleaned"));
                         } else if (messageText.equals("/getAllUsers")) {
-                            bot.execute(new SendMessage(AdminID, "There is" + allUsers.size() + " users right now."));
+                            bot.execute(new SendMessage(AdminID, "There is" + 30 + allUsers.size() + " users right now."));
                         }
                     } else if (messageText.startsWith("needReply:")) {
                         String userQuestion = messageText.substring(10);
@@ -173,130 +171,67 @@ public class BotController {
                         bot.execute(new SendVideo(playerId, videoExampleFile));
                         bot.execute(new SendMessage(playerId, "☝️ Here is a video example of how I work.").parseMode(HTML));
 
-                    } else if (userDeposited(playerId) || userDeposited(playerId) ) {
+                    } else if (userDeposited(playerId) || userDeposited(playerId)) {
                         if (messageText.equals("Get Signal") || messageCallbackText.equals("getSignal")) {
-                            Date date = new Date();
-                            ArrayList<String> listOfPairs = new ArrayList<>();
-                            if (date.getDay() == 0 || date.getDay() == 1) {
-                                listOfPairs.add("AUD/CAD OTC");
-                                listOfPairs.add("AUD/CHF OTC");
-                                listOfPairs.add("AUD/NZD OTC");
-                                listOfPairs.add("CAD/CHF OTC");
-                                listOfPairs.add("EUR/CHF OTC");
-                                listOfPairs.add("EUR/JPY OTC");
-                                listOfPairs.add("EUR/USD OTC");
-                                listOfPairs.add("GBP/JPY OTC");
-                                listOfPairs.add("NZD/JPY OTC");
-                                listOfPairs.add("NZD/USD OTC");
-                                listOfPairs.add("USD/CAD OTC");
-                                listOfPairs.add("USD/CNH OTC");
-                                listOfPairs.add("CHF/NOK OTC");
-                                listOfPairs.add("EUR/GBP OTC");
-                                listOfPairs.add("EUR/TRY OTC");
-                                listOfPairs.add("CHF/JPY OTC");
-                                listOfPairs.add("EUR/NZD OTC");
-                                listOfPairs.add("AUD/JPY OTC");
-                                listOfPairs.add("AUD/USD OTC");
-                                listOfPairs.add("EUR/HUF OTC");
-                                listOfPairs.add("USD/CHF OTC");
-                            } else {
-                                listOfPairs.add("AUD/CAD OTC");
-                                listOfPairs.add("AUD/CHF OTC");
-                                listOfPairs.add("AUD/NZD OTC");
-                                listOfPairs.add("CAD/CHF OTC");
-                                listOfPairs.add("EUR/CHF OTC");
-                                listOfPairs.add("EUR/JPY OTC");
-                                listOfPairs.add("EUR/USD OTC");
-                                listOfPairs.add("GBP/JPY OTC");
-                                listOfPairs.add("NZD/JPY OTC");
-                                listOfPairs.add("NZD/USD OTC");
-                                listOfPairs.add("USD/CAD OTC");
-                                listOfPairs.add("USD/CNH OTC");
-                                listOfPairs.add("CHF/NOK OTC");
-                                listOfPairs.add("EUR/GBP OTC");
-                                listOfPairs.add("EUR/TRY OTC");
-                                listOfPairs.add("CHF/JPY OTC");
-                                listOfPairs.add("EUR/NZD OTC");
-                                listOfPairs.add("AUD/JPY OTC");
-                                listOfPairs.add("AUD/USD OTC");
-                                listOfPairs.add("EUR/HUF OTC");
-                                listOfPairs.add("USD/CHF OTC");
-//                                listOfPairs.add("EUR/JPY");
-//                                listOfPairs.add("GBP/JPY");
-//                                listOfPairs.add("AUD/CAD");
-//                                listOfPairs.add("AUD/JPY");
-//                                listOfPairs.add("AUD/USD");
-//                                listOfPairs.add("CAD/CHF");
-//                                listOfPairs.add("CAD/JPY");
-//                                listOfPairs.add("CHF/JPY");
-//                                listOfPairs.add("EUR/AUD");
-//                                listOfPairs.add("EUR/CAD");
-//                                listOfPairs.add("EUR/CHF");
-//                                listOfPairs.add("EUR/GBP");
-//                                listOfPairs.add("EUR/USD");
-//                                listOfPairs.add("GBP/CAD");
-//                                listOfPairs.add("GBP/CHF");
-//                                listOfPairs.add("GBP/USD");
-//                                listOfPairs.add("USD/CAD");
-//                                listOfPairs.add("USD/CHF");
-//                                listOfPairs.add("GBP/USD");
-//                                listOfPairs.add("USD/CAD");
-//                                listOfPairs.add("USD/CHF");
-//                                listOfPairs.add("GBP/AUD");
-//                                listOfPairs.add("USD/JPY");
-//                                listOfPairs.add("USD/CNH");
-//                                listOfPairs.add("AUD/CHF");
-                            }
-                            bot.execute(new SendMessage(playerId, "⌛️ Looking for the best pair...").parseMode(HTML));
-                            try {
-                                Thread.sleep(5000);
-                            } catch (InterruptedException e) {
-                                bot.execute(new SendMessage(playerId, "❌ An error occurred. Please try again. "));
-                                e.printStackTrace();
-                            }
-                            Random random = new Random();
-                            int randomNumber = random.nextInt(listOfPairs.size());
-                            int randomUp = random.nextInt(2);
-                            String direction = "";
-                            if (randomUp == 0) {
-                                direction = "⬆️ Direction: <b>UP</b> ";
-                            } else {
-                                direction = "⬇️ Direction: <b>DOWN</b> ";
-                            }
-                            int randomAccuracy = random.nextInt(28) + 70;
-                            int randomAddTime = random.nextInt(10000) + 8000;
-                            // int randomTime = 1;
-                            // int randomTime = random.nextInt(userDBMap.get(String.valueOf(playerId)).getMaxTimeDeal() - userDBMap.get(String.valueOf(playerId)).getMinTimeDeal()) + userDBMap.get(String.valueOf(playerId)).getMinTimeDeal();
-                            int randomTime = random.nextInt(5) + 1;
-                            String pickedPair = listOfPairs.get(randomNumber);
-                            EditMessageText editMessageText = new EditMessageText(playerId, messageId + 1, "Pair <b>" + pickedPair + "</b> has been picked. I am conducting an analysis on it.").parseMode(HTML);
-                            bot.execute(editMessageText);
-                            try {
-                                Thread.sleep(5000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-                            InlineKeyboardButton button22 = new InlineKeyboardButton("Get new signal");
-                            button22.callbackData("getSignal");
-                            inlineKeyboardMarkup.addRow(button22);
-                            EditMessageText editMessage = new EditMessageText(playerId, messageId + 1, "Your signal is: \n\uD83D\uDCB0 <b>" + pickedPair + "</b>\n" + direction + "\n⌛️ Time for deal:<b> " + randomTime + "M </b>\n\uD83C\uDFAF Accuracy calculated:<b> " + randomAccuracy + "%</b>\n⚡️ Wait for a message '<b>GO!</b>' and then make forecast.").parseMode(HTML);
-                            bot.execute(editMessage);
-                            try {
-                                Thread.sleep(randomAddTime);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            bot.execute(new SendMessage(playerId, "<b>GO!</b>").parseMode(HTML));
+                            List<String> listOfPairs = Arrays.asList(
+                                    "AUD/CAD OTC", "AUD/CHF OTC", "AUD/NZD OTC", "CAD/CHF OTC", "EUR/CHF OTC",
+                                    "EUR/JPY OTC", "EUR/USD OTC", "GBP/JPY OTC", "NZD/JPY OTC", "NZD/USD OTC",
+                                    "USD/CAD OTC", "USD/CNH OTC", "CHF/NOK OTC", "EUR/GBP OTC", "EUR/TRY OTC",
+                                    "CHF/JPY OTC", "EUR/NZD OTC", "AUD/JPY OTC", "AUD/USD OTC", "EUR/HUF OTC",
+                                    "USD/CHF OTC"
+                            );
+                            Runnable signalGeneratorTask = () -> {
+                                bot.execute(new SendMessage(playerId, "⌛️ Looking for the best pair...").parseMode(HTML));
+                                try {
+                                    Thread.sleep(5000);
+                                } catch (InterruptedException e) {
+                                    bot.execute(new SendMessage(playerId, "❌ An error occurred. Please try again. "));
+                                    e.printStackTrace();
+                                }
+                                Random random = new Random();
+                                int randomNumber = random.nextInt(listOfPairs.size());
+                                int randomUp = random.nextInt(2);
+                                String direction = "";
+                                if (randomUp == 0) {
+                                    direction = "⬆️ Direction: <b>UP</b> ";
+                                } else {
+                                    direction = "⬇️ Direction: <b>DOWN</b> ";
+                                }
+                                int randomAccuracy = random.nextInt(28) + 70;
+                                int randomAddTime = random.nextInt(10000) + 8000;
+                                int randomTime = random.nextInt(5) + 1;
+                                String pickedPair = listOfPairs.get(randomNumber);
+                                EditMessageText editMessageText = new EditMessageText(playerId, messageId + 1, "Pair <b>" + pickedPair + "</b> has been picked. I am conducting an analysis on it.").parseMode(HTML);
+                                bot.execute(editMessageText);
+                                try {
+                                    Thread.sleep(5000);
+                                } catch (InterruptedException e) {
+                                    bot.execute(new SendMessage(playerId, "❌ An error occurred. Please try again. "));
+                                    e.printStackTrace();
+                                }
+                                InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+                                InlineKeyboardButton button22 = new InlineKeyboardButton("Get new signal");
+                                button22.callbackData("getSignal");
+                                inlineKeyboardMarkup.addRow(button22);
+                                EditMessageText editMessage = new EditMessageText(playerId, messageId + 1, "Your signal is: \n\uD83D\uDCB0 <b>" + pickedPair + "</b>\n" + direction + "\n⌛️ Time for deal:<b> " + randomTime + "M </b>\n\uD83C\uDFAF Accuracy calculated:<b> " + randomAccuracy + "%</b>\n⚡️ Wait for a message '<b>GO!</b>' and then make forecast.").parseMode(HTML);
+                                bot.execute(editMessage);
+                                try {
+                                    Thread.sleep(randomAddTime);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                bot.execute(new SendMessage(playerId, "<b>GO!</b>").parseMode(HTML));
+                            };
+                            new Thread(signalGeneratorTask).start();
                         }
                     } else if (userRegistered(playerId)) {
                         if (messageCallbackText.equals("IDeposit")) {
                             try {
-                            bot.execute(new SendMessage(playerId, "⏳ Great your deposit will be checking soon."));
-                            String userKey = USER_DB_MAP_KEY + ":" + playerId;
-                            User checkedUser = convertJsonToUser(jedis.get(userKey));
-                            String sendAdminUID = checkedUser.getUID();
-                            bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> deposited. Write 'Y11111111' (telegram id) to approve and 'N1111111' to disapprove").parseMode(HTML));
+                                bot.execute(new SendMessage(playerId, "⏳ Great your deposit will be checking soon."));
+                                String userKey = USER_DB_MAP_KEY + ":" + playerId;
+                                User checkedUser = convertJsonToUser(jedis.get(userKey));
+                                String sendAdminUID = checkedUser.getUID();
+                                bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> deposited. Write 'Y11111111' (telegram id) to approve and 'N1111111' to disapprove").parseMode(HTML));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(playerId, "❌ An error occurred. Please try again. "));
                                 e.printStackTrace();
