@@ -322,7 +322,7 @@ public class BotController {
                                     button13.callbackData("ImRegistered");
                                     InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                                     inlineKeyboardMarkup.addRow(button12, button13);
-                                    bot.execute(new SendMessage(playerId, "❌ Something went wrong. Make sure you registered with the 'Register here' button and sent a new UID. There is an example of how to do it step by step in the video below. After that press the 'I'm ready!'\n" +
+                                    bot.execute(new SendMessage(playerId, "❌ Something went wrong. You sent me old UID. Make sure you registered with the 'Register here' button and sent a new UID. There is an example of how to do it step by step in the video below. After that press the 'I'm ready!'\n" +
                                             "\n" +
                                             "If you still have problems, then write to support with the command /support. ").replyMarkup(inlineKeyboardMarkup));
                                 }
