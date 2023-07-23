@@ -57,7 +57,9 @@ public class BotController {
                     long playerId;
                     String messageText = "";
                     String messageCallbackText = "";
-                    String uid = "";
+                    String uid;
+                    int firstDigit = 6;
+                    int secondDigit = 2;
                     int messageId;
                     Path resourcePath = Paths.get("src/main/resources");
                     File videoDepositFile = resourcePath.resolve("depositTutorial.mp4").toFile();
@@ -143,7 +145,14 @@ public class BotController {
                             jedis.flushAll();
                             bot.execute(new SendMessage(AdminID, "DB was cleaned"));
                         } else if (messageText.equals("/getAllUsers")) {
-                            bot.execute(new SendMessage(AdminID, "There is" + 30 + allUsers.size() + " users right now."));
+                            int size = 69 + allUsers.size();
+                            bot.execute(new SendMessage(AdminID, "There is " + size  + " users right now."));
+                        } else if (messageText.startsWith("/setFirstDigit")){
+                            firstDigit = Integer.parseInt(messageText.substring(14));
+                            bot.execute(new SendMessage(AdminID, "First digit now is " + firstDigit + "."));
+                        } else if (messageText.startsWith("/setSecondDigit")){
+                            secondDigit = Integer.parseInt(messageText.substring(15));
+                            bot.execute(new SendMessage(AdminID, "First digit now is " + secondDigit + "."));
                         }
                     } else if (messageText.startsWith("needReply:")) {
                         String userQuestion = messageText.substring(10);
@@ -303,8 +312,20 @@ public class BotController {
                             try {
                                 User user = convertJsonToUser(jedis.get(userKey));
                                 String sendAdminUID = user.getUID();
-                                bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> want to register. Write 'A11111111' (telegram id) to approve and 'D1111111' to disapprove").parseMode(HTML));
-                                bot.execute(new SendMessage(playerId, "⏳ Great, your UID will be verified soon"));
+                                if (Integer.parseInt(sendAdminUID.substring(0,1)) >= firstDigit && Integer.parseInt(sendAdminUID.substring(1,2)) >= secondDigit ){
+                                    bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> want to register. Write 'A11111111' (telegram id) to approve and 'D1111111' to disapprove").parseMode(HTML));
+                                    bot.execute(new SendMessage(playerId, "⏳ Great, your UID will be verified soon"));
+                                } else {
+                                    InlineKeyboardButton button12 = new InlineKeyboardButton("Register here");
+                                    InlineKeyboardButton button13 = new InlineKeyboardButton("I'm ready!");
+                                    button12.url("https://bit.ly/ChatGPTtrading");
+                                    button13.callbackData("ImRegistered");
+                                    InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+                                    inlineKeyboardMarkup.addRow(button12, button13);
+                                    bot.execute(new SendMessage(playerId, "❌ Something went wrong. Make sure you registered with the 'Register here' button and sent a new UID. There is an example of how to do it step by step in the video below. After that press the 'I'm ready!'\n" +
+                                            "\n" +
+                                            "If you still have problems, then write to support with the command /support. ").replyMarkup(inlineKeyboardMarkup));
+                                }
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(playerId, "❌ An error occurred. Please send your UID again. "));
                                 e.printStackTrace();
