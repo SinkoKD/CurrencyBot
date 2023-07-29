@@ -12,9 +12,11 @@ public class DateUtil {
     }
 
     public static Date addMinutes(Date date, int days) {
+        System.out.printf("In the DateUtil");
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.MINUTE, days);
+        System.out.printf("Finish in the DateUtil");
         return cal.getTime();
     }
 }
