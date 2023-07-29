@@ -99,6 +99,7 @@ public class BotController {
                         }
                     }
 
+
                     Date adminDate = new Date();
                     User adminUser = new User("Admin", AdminID, false, false, adminDate);
                     jedis.set(AdminID, convertUserToJson(adminUser));
