@@ -230,10 +230,10 @@ public class BotController {
                         } else if (messageText.equals("/getAllUsers")) {
                             int size = 84 + allUsers.size();
                             bot.execute(new SendMessage(AdminID, "There is " + size + " users right now."));
-                        } else if (messageText.startsWith("/setFirstDigit")) {
+                        } else if (messageText.startsWith("setFirstDigit:")) {
                             firstDigit = Integer.parseInt(messageText.substring(14));
                             bot.execute(new SendMessage(AdminID, "First digit now is " + firstDigit + "."));
-                        } else if (messageText.startsWith("/setSecondDigit")) {
+                        } else if (messageText.startsWith("setSecondDigit:")) {
                             secondDigit = Integer.parseInt(messageText.substring(15));
                             bot.execute(new SendMessage(AdminID, "First digit now is " + secondDigit + "."));
                         }
