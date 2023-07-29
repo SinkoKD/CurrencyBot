@@ -100,11 +100,11 @@ public class BotController {
                     }
 
 
-                    Date adminDate = new Date();
-                    User adminUser = new User("Admin", AdminID, false, false, adminDate);
-                    jedis.set(AdminID, convertUserToJson(adminUser));
-                    User Im = new User("NoAdmin", "430823029", true, true, adminDate);
-                    jedis.set(AdminID, convertUserToJson(Im));
+//                    Date adminDate = new Date();
+//                    User adminUser = new User("Admin", AdminID, false, false, adminDate);
+//                    jedis.set(AdminID, convertUserToJson(adminUser));
+//                    User Im = new User("NoAdmin", "430823029", true, true, adminDate);
+//                    jedis.set(AdminID, convertUserToJson(Im));
 
                     try {
                         String userKey = USER_DB_MAP_KEY + ":" + AdminID;
@@ -306,7 +306,7 @@ public class BotController {
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
-                                bot.execute(new SendMessage(playerId, "<b>GO!</b>").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
+                                bot.execute(new SendMessage(playerId, "<b>GO!</b>").parseMode(HTML));
                             };
                             new Thread(signalGeneratorTask).start();
                         }
