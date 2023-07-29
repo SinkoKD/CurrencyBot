@@ -59,12 +59,13 @@ public class BotController {
                     String messageCallbackText = "";
                     String uid;
                     int firstDigit = 6;
-                    int secondDigit = 2;
+                    int secondDigit = 3;
                     int messageId;
                     Path resourcePath = Paths.get("src/main/resources");
                     File videoDepositFile = resourcePath.resolve("depositTutorial.mp4").toFile();
                     File videoRegistrationFile = resourcePath.resolve("videoRegistrationGuide.mp4").toFile();
                     File videoExampleFile = resourcePath.resolve("videoExample.mp4").toFile();
+
 
                     if (update.callbackQuery() == null && (update.message() == null || update.message().text() == null)) {
                         return;
@@ -85,25 +86,63 @@ public class BotController {
                         playerId = 0L;
                     }
 
+                    if (playerId != Long.parseLong(AdminID)) {
+                        try {
+                            String userKey = USER_DB_MAP_KEY + ":" + playerId;
+                            User checkedUser = convertJsonToUser(jedis.get(userKey));
+                            Date date = new Date();
+                            checkedUser.setLastTimeTexted(date);
+                            String updatedUser = convertUserToJson(checkedUser);
+                            jedis.set(userKey, updatedUser);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    Date adminDate = new Date();
+                    User adminUser = new User("Admin", AdminID, false, false, adminDate);
+                    jedis.set(AdminID, convertUserToJson(adminUser));
+                    User Im = new User("NoAdmin", "430823029", true, true, adminDate);
+                    jedis.set(AdminID, convertUserToJson(Im));
+
+                    try {
+                        String userKey = USER_DB_MAP_KEY + ":" + AdminID;
+                        User checkedAdmin = convertJsonToUser(jedis.get(userKey));
+                        Date currentDate = new Date();
+                        Date checkAdminDate = DateUtil.addMinutes(checkedAdmin.getLastTimeTexted(), 20);
+                        if (checkAdminDate.getTime() < currentDate.getTime()) {
+                            checkedAdmin.setLastTimeTexted(currentDate);
+                            jedis.set(AdminID, convertUserToJson(checkedAdmin));
+                            bot.execute(new SendMessage("430823029", "It works every 20 minutes"));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                     if (String.valueOf(playerId).equals(AdminID)) {
-                        if (messageText.startsWith("A") || messageText.startsWith("a")) {
-                            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-                            InlineKeyboardButton button7 = new InlineKeyboardButton("Deposit done!");
-                            button7.callbackData("IDeposit");
-                            inlineKeyboardMarkup.addRow(button7);
-                            System.out.println(messageText.length());
-                            String tgID = messageText.substring(1);
-                            System.out.println(tgID);
-                            registrationApprove(Long.parseLong(tgID));
-                            bot.execute(new SendMessage(tgID, "✅ Great, your account is confirmed! The last step is to make any deposit by any convenient way. After that press the button 'Deposit done'.\n" +
-                                    "\n" +
-                                    "I would like to note that the recommended starting deposit of $50 - $150. But it is not necessary and is a tool for faster earnings. Also, if you deposit more than $50, use promo code 50START to get an extra 50% of your deposit. For example, with a deposit of 100$ you will get 50$ additional. It means that you will get 150$ in total.\n" +
-                                    "\n" +
-                                    "At the bottom there is a video instruction on how to top up the account.").replyMarkup(inlineKeyboardMarkup));
-                            bot.execute(new SendVideo(tgID, videoDepositFile));
-                            bot.execute(new SendMessage(tgID, "☝️ Here is a video guide on how to make a deposit.").parseMode(HTML));
-                            bot.execute(new SendMessage(AdminID, "Registration for " + tgID + " was approved"));
-                        } else if (messageText.startsWith("D") || messageText.startsWith("d")) {
+                        if (messageText.startsWith("A") || messageText.startsWith("a") || messageText.startsWith("Ф") || messageText.startsWith("ф")) {
+                            try {
+                                InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+                                InlineKeyboardButton button7 = new InlineKeyboardButton("Deposit done!");
+                                button7.callbackData("IDeposit");
+                                inlineKeyboardMarkup.addRow(button7);
+                                System.out.println(messageText.length());
+                                String tgID = messageText.substring(1);
+                                System.out.println(tgID);
+                                registrationApprove(Long.parseLong(tgID));
+                                bot.execute(new SendMessage(tgID, "✅ Great, your account is confirmed! The last step is to make any deposit by any convenient way. After that press the button 'Deposit done'.\n" +
+                                        "\n" +
+                                        "I would like to note that the recommended starting deposit of $50 - $150. But it is not necessary and is a tool for faster earnings. Also, if you deposit more than $50, use promo code 50START to get an extra 50% of your deposit. For example, with a deposit of 100$ you will get 50$ additional. It means that you will get 150$ in total.\n" +
+                                        "\n" +
+                                        "At the bottom there is a video instruction on how to top up the account.").replyMarkup(inlineKeyboardMarkup));
+                                bot.execute(new SendVideo(tgID, videoDepositFile));
+                                bot.execute(new SendMessage(tgID, "☝️ Here is a video guide on how to make a deposit.").parseMode(HTML));
+                                bot.execute(new SendMessage(AdminID, "Registration for " + tgID + " was approved"));
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
+                                e.printStackTrace();
+                            }
+                        } else if (messageText.startsWith("D") || messageText.startsWith("d") || messageText.startsWith("В") || messageText.startsWith("в")) {
                             String tgID = messageText.substring(1);
                             InlineKeyboardButton button12 = new InlineKeyboardButton("Register here");
                             InlineKeyboardButton button13 = new InlineKeyboardButton("I'm ready!");
@@ -115,18 +154,23 @@ public class BotController {
                                     "\n" +
                                     "If you still have problems, then write to support with the command /support. ").replyMarkup(inlineKeyboardMarkup));
                             bot.execute(new SendMessage(AdminID, "Registration for " + tgID + " was disapproved"));
-                        } else if (messageText.startsWith("Y") || messageText.startsWith("y")) {
-                            String tgID = messageText.substring(1);
-                            depositApprove(Long.parseLong(tgID));
-                            Keyboard replyKeyboardMarkup = (Keyboard) new ReplyKeyboardMarkup(
-                                    new String[]{"Get Signal"});
-                            bot.execute(new SendMessage(tgID, "✅ Great! Everything is ready! You can start getting signals. For this click on 'Get Signals' or write it manually. \n" +
-                                    "\n" +
-                                    "Below is a video guide on how to use signals from me. \n" +
-                                    "\n" +
-                                    "If you have any questions use the /support command.").replyMarkup((com.pengrad.telegrambot.model.request.Keyboard) replyKeyboardMarkup));
-                            bot.execute(new SendMessage(AdminID, "Deposit for " + tgID + " was approved"));
-                        } else if (messageText.startsWith("N") || messageText.startsWith("n")) {
+                        } else if (messageText.startsWith("Y") || messageText.startsWith("y") || messageText.startsWith("Н") || messageText.startsWith("н")) {
+                            try {
+                                String tgID = messageText.substring(1);
+                                depositApprove(Long.parseLong(tgID));
+                                Keyboard replyKeyboardMarkup = (Keyboard) new ReplyKeyboardMarkup(
+                                        new String[]{"Get Signal"});
+                                bot.execute(new SendMessage(tgID, "✅ Great! Everything is ready! You can start getting signals. For this click on 'Get Signals' or write it manually. \n" +
+                                        "\n" +
+                                        "Below is a video guide on how to use signals from me. \n" +
+                                        "\n" +
+                                        "If you have any questions use the /support command.").replyMarkup((com.pengrad.telegrambot.model.request.Keyboard) replyKeyboardMarkup));
+                                bot.execute(new SendMessage(AdminID, "Deposit for " + tgID + " was approved"));
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
+                                e.printStackTrace();
+                            }
+                        } else if (messageText.startsWith("N") || messageText.startsWith("n") || messageText.startsWith("Т") || messageText.startsWith("т")) {
                             String tgID = messageText.substring(1);
                             InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                             InlineKeyboardButton button7 = new InlineKeyboardButton("Deposit done");
@@ -141,16 +185,48 @@ public class BotController {
                             System.out.println(indexOfAnd + "\n" + tgID + "\n" + reply);
                             bot.execute(new SendMessage(tgID, reply));
                             bot.execute(new SendMessage(AdminID, "Reply was sent"));
+                        } else if (messageText.startsWith("deleteUser:")) {
+                            try {
+                                String TGId = (messageText.substring(11));
+                                jedis.del(TGId);
+                                bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " was fully deleted"));
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
+                                e.printStackTrace();
+                            }
+                        } else if (messageText.startsWith("deleteDeposit:")) {
+                            try {
+                                String TGId = (messageText.substring(14));
+                                depositDisapprove(Long.parseLong(TGId));
+                                bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " got deposit disapprove"));
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
+                                e.printStackTrace();
+                            }
+                        } else if (messageText.startsWith("deleteRegistration:")) {
+                            try {
+                                String TGId = (messageText.substring(19));
+                                registrationDisapprove(Long.parseLong(TGId));
+                                bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " got register disapprove"));
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
+                                e.printStackTrace();
+                            }
                         } else if (messageText.equals("/clearDB")) {
-                            jedis.flushAll();
-                            bot.execute(new SendMessage(AdminID, "DB was cleaned"));
+                            try {
+                                jedis.flushAll();
+                                bot.execute(new SendMessage(AdminID, "DB was cleaned"));
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
+                                e.printStackTrace();
+                            }
                         } else if (messageText.equals("/getAllUsers")) {
-                            int size = 69 + allUsers.size();
-                            bot.execute(new SendMessage(AdminID, "There is " + size  + " users right now."));
-                        } else if (messageText.startsWith("/setFirstDigit")){
+                            int size = 84 + allUsers.size();
+                            bot.execute(new SendMessage(AdminID, "There is " + size + " users right now."));
+                        } else if (messageText.startsWith("/setFirstDigit")) {
                             firstDigit = Integer.parseInt(messageText.substring(14));
                             bot.execute(new SendMessage(AdminID, "First digit now is " + firstDigit + "."));
-                        } else if (messageText.startsWith("/setSecondDigit")){
+                        } else if (messageText.startsWith("/setSecondDigit")) {
                             secondDigit = Integer.parseInt(messageText.substring(15));
                             bot.execute(new SendMessage(AdminID, "First digit now is " + secondDigit + "."));
                         }
@@ -229,7 +305,7 @@ public class BotController {
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
-                                bot.execute(new SendMessage(playerId, "<b>GO!</b>").parseMode(HTML));
+                                bot.execute(new SendMessage(playerId, "<b>GO!</b>").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
                             };
                             new Thread(signalGeneratorTask).start();
                         }
@@ -281,7 +357,8 @@ public class BotController {
                                 inlineKeyboardMarkup.addRow(button5, button6);
                                 String text = messageText.replaceAll("\\s", "");
                                 uid = text.substring(2, 10);
-                                User newUser = new User(playerName, uid, false, false);
+                                Date date = new Date();
+                                User newUser = new User(playerName, uid, false, false, date);
                                 bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Your ID is " + uid + " is it correct?").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 jedis.set(userKey, convertUserToJson(newUser));
@@ -299,7 +376,8 @@ public class BotController {
                                 inlineKeyboardMarkup.addRow(button5, button6);
                                 String text = messageText.replaceAll("\\s", "");
                                 uid = text.substring(4, 12);
-                                User newUser = new User(playerName, uid, false, false);
+                                Date date = new Date();
+                                User newUser = new User(playerName, uid, false, false, date);
                                 bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Your ID is " + uid + " is it correct?").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 jedis.set(userKey, convertUserToJson(newUser));
@@ -312,7 +390,7 @@ public class BotController {
                             try {
                                 User user = convertJsonToUser(jedis.get(userKey));
                                 String sendAdminUID = user.getUID();
-                                if (Integer.parseInt(sendAdminUID.substring(0,1)) >= firstDigit && Integer.parseInt(sendAdminUID.substring(1,2)) >= secondDigit ){
+                                if (Integer.parseInt(sendAdminUID.substring(0, 1)) >= firstDigit && Integer.parseInt(sendAdminUID.substring(1, 2)) >= secondDigit) {
                                     bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> want to register. Write 'A11111111' (telegram id) to approve and 'D1111111' to disapprove").parseMode(HTML));
                                     bot.execute(new SendMessage(playerId, "⏳ Great, your UID will be verified soon"));
                                 } else {
@@ -399,10 +477,33 @@ public class BotController {
 
     static void depositApprove(long playerId) {
         try (Jedis jedis = jedisPool.getResource()) {
-
             String userKey = USER_DB_MAP_KEY + ":" + playerId;
             User checkedUser = convertJsonToUser(jedis.get(userKey));
             checkedUser.setDeposited(true);
+            String updatedUser = convertUserToJson(checkedUser);
+            jedis.set(userKey, updatedUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void depositDisapprove(long playerId) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            String userKey = USER_DB_MAP_KEY + ":" + playerId;
+            User checkedUser = convertJsonToUser(jedis.get(userKey));
+            checkedUser.setDeposited(false);
+            String updatedUser = convertUserToJson(checkedUser);
+            jedis.set(userKey, updatedUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void registrationDisapprove(long playerId) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            String userKey = USER_DB_MAP_KEY + ":" + playerId;
+            User checkedUser = convertJsonToUser(jedis.get(userKey));
+            checkedUser.setRegistered(false);
             String updatedUser = convertUserToJson(checkedUser);
             jedis.set(userKey, updatedUser);
         } catch (Exception e) {

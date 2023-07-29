@@ -1,16 +1,33 @@
 package org.example.bot;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class User implements Serializable {
     private String name;
     private String UID;
     private boolean registered;
     private boolean deposited;
+    private Date lastTimeTexted;
 
+    public User(String name, String UID, boolean registered, boolean deposited, Date lastTimeTexted) {
+        this.name = name;
+        this.UID = UID;
+        this.registered = registered;
+        this.deposited = deposited;
+        this.lastTimeTexted = lastTimeTexted;
+    }
 
     public String getUID() {
         return UID;
+    }
+
+    public Date getLastTimeTexted() {
+        return lastTimeTexted;
+    }
+
+    public void setLastTimeTexted(Date lastTimeTexted) {
+        this.lastTimeTexted = lastTimeTexted;
     }
 
     public boolean isDeposited() {
@@ -22,14 +39,6 @@ public class User implements Serializable {
     }
 
     public User() {
-    }
-
-    public User(String name, String UID, boolean registered, boolean deposited) {
-        this.name = name;
-        this.UID = UID;
-        ;
-        this.registered = registered;
-        this.deposited = deposited;
     }
 
     public void setUID(String UID) {
