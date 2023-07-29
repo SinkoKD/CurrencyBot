@@ -110,11 +110,15 @@ public class BotController {
                         String userKey = USER_DB_MAP_KEY + ":" + AdminID;
                         User checkedAdmin = convertJsonToUser(jedis.get(userKey));
                         Date currentDate = new Date();
+                        System.out.println(currentDate);
                         Date checkAdminDate = DateUtil.addMinutes(checkedAdmin.getLastTimeTexted(), 10);
+                        System.out.println(checkAdminDate);
                         if (checkAdminDate.getTime() < currentDate.getTime()) {
+                            System.out.println("More time passed");
                             checkedAdmin.setLastTimeTexted(currentDate);
                             jedis.set(AdminID, convertUserToJson(checkedAdmin));
-                            bot.execute(new SendMessage("430823029", "It works every 10 minutes"));
+                            bot.execute(new SendMessage(430823029, "It works every 10 minutes"));
+                            System.out.println("Success");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
