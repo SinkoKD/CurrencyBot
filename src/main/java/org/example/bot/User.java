@@ -9,17 +9,27 @@ public class User implements Serializable {
     private boolean registered;
     private boolean deposited;
     private Date lastTimeTexted;
+    private int timesTextWasSent;
 
-    public User(String name, String UID, boolean registered, boolean deposited, Date lastTimeTexted) {
+    public User(String name, String UID, boolean registered, boolean deposited, Date lastTimeTexted, int timesTextWasSent) {
         this.name = name;
         this.UID = UID;
         this.registered = registered;
         this.deposited = deposited;
         this.lastTimeTexted = lastTimeTexted;
+        this.timesTextWasSent = timesTextWasSent;
     }
 
     public String getUID() {
         return UID;
+    }
+
+    public int getTimesTextWasSent() {
+        return timesTextWasSent;
+    }
+
+    public void setTimesTextWasSent(int timesTextWasSent) {
+        this.timesTextWasSent = timesTextWasSent;
     }
 
     public Date getLastTimeTexted() {

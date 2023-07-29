@@ -367,7 +367,7 @@ public class BotController {
                                 String text = messageText.replaceAll("\\s", "");
                                 uid = text.substring(2, 10);
                                 Date date = new Date();
-                                User newUser = new User(playerName, uid, false, false, date);
+                                User newUser = new User(playerName, uid, false, false, date, 0);
                                 bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Your ID is " + uid + " is it correct?").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 jedis.set(userKey, convertUserToJson(newUser));
@@ -386,7 +386,7 @@ public class BotController {
                                 String text = messageText.replaceAll("\\s", "");
                                 uid = text.substring(4, 12);
                                 Date date = new Date();
-                                User newUser = new User(playerName, uid, false, false, date);
+                                User newUser = new User(playerName, uid, false, false, date, 0);
                                 bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Your ID is " + uid + " is it correct?").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 jedis.set(userKey, convertUserToJson(newUser));
