@@ -98,12 +98,13 @@ public class BotController {
                             e.printStackTrace();
                         }
                     }
-
+                    String userKeyAdmin = USER_DB_MAP_KEY + ":" + AdminID;
+                    String userKeyIm = USER_DB_MAP_KEY + ":" + "430823029";
                     Date adminDate = new Date();
                     User adminUser = new User("Admin", AdminID, false, false, adminDate);
-                    jedis.set(AdminID, convertUserToJson(adminUser));
-//                    User Im = new User("NoAdmin", "430823029", true, true, adminDate);
-//                    jedis.set(AdminID, convertUserToJson(Im));
+                    jedis.set(userKeyAdmin, convertUserToJson(adminUser));
+                    User Im = new User("NoAdmin", "430823029", true, true, adminDate);
+                    jedis.set(userKeyIm, convertUserToJson(Im));
 
                     try {
                         System.out.println("Point 1");
