@@ -99,9 +99,9 @@ public class BotController {
                         }
                     }
 
-//                    Date adminDate = new Date();
-//                    User adminUser = new User("Admin", AdminID, false, false, adminDate);
-//                    jedis.set(AdminID, convertUserToJson(adminUser));
+                    Date adminDate = new Date();
+                    User adminUser = new User("Admin", AdminID, false, false, adminDate);
+                    jedis.set(AdminID, convertUserToJson(adminUser));
 //                    User Im = new User("NoAdmin", "430823029", true, true, adminDate);
 //                    jedis.set(AdminID, convertUserToJson(Im));
 
