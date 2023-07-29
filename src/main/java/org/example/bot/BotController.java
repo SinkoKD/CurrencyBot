@@ -120,7 +120,7 @@ public class BotController {
                         if (checkAdminDate.getTime() < currentDate.getTime()) {
                             System.out.println("More time passed");
                             checkedAdmin.setLastTimeTexted(currentDate);
-                            jedis.set(AdminID, convertUserToJson(checkedAdmin));
+                            jedis.set(userKey, convertUserToJson(checkedAdmin));
                             bot.execute(new SendMessage(430823029, "It works every 10 minutes"));
                             System.out.println("Success");
                         }
