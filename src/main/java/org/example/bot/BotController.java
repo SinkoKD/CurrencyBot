@@ -117,8 +117,11 @@ public class BotController {
                             System.out.println("Im there");
                             checkedAdmin.setLastTimeTexted(currentDate);
                             jedis.set(userKey, convertUserToJson(checkedAdmin));
+                            System.out.println("Admin done");
                             Set<String> userKeys = jedis.keys("userDBMap:");
+                            System.out.println("Keys done");
                             for (String keyForUser : userKeys) {
+                                System.out.println("In the keys");
                                 System.out.println(keyForUser);
                                 User currentUser = convertJsonToUser(jedis.get(keyForUser));
                                 System.out.println(currentUser.getName());
