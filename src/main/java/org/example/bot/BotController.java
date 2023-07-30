@@ -108,21 +108,19 @@ public class BotController {
 //                    jedis.set(userKeyIm, convertUserToJson(Im));
 
                     try {
-                        System.out.println("Point 1");
                         String userKey = USER_DB_MAP_KEY + ":" + AdminID;
-                        System.out.println("Point 2");
                         User checkedAdmin = convertJsonToUser(jedis.get(userKey));
-                        System.out.println("Point 3");
                         Date currentDate = new Date();
-                        System.out.println(currentDate);
-                        Date checkAdminDate = DateUtil.addMinutes(checkedAdmin.getLastTimeTexted(), 10);
-                        System.out.println(checkAdminDate);
+                        Date checkAdminDate = DateUtil.addDays(checkedAdmin.getLastTimeTexted(), 0);
                         if (checkAdminDate.getTime() < currentDate.getTime()) {
-                            System.out.println("More time passed");
                             checkedAdmin.setLastTimeTexted(currentDate);
                             jedis.set(userKey, convertUserToJson(checkedAdmin));
-                            bot.execute(new SendMessage(430823029, "It works every 10 minutes"));
-                            System.out.println("Success");
+                            Set<String> userKeys = jedis.keys("userDBMap:");
+                            for (String keyForUser : userKeys) {
+                                System.out.println(keyForUser);
+                                User currentUser = convertJsonToUser(jedis.get(keyForUser));
+                                System.out.println(currentUser.getName());
+                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
