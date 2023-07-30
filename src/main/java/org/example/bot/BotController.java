@@ -111,8 +111,10 @@ public class BotController {
                         String userKey = USER_DB_MAP_KEY + ":" + AdminID;
                         User checkedAdmin = convertJsonToUser(jedis.get(userKey));
                         Date currentDate = new Date();
-                        Date checkAdminDate = DateUtil.addDays(checkedAdmin.getLastTimeTexted(), 0);
+                        Date checkAdminDate = DateUtil.addMinutes(checkedAdmin.getLastTimeTexted(), 5);
+                        System.out.println("Im not there");
                         if (checkAdminDate.getTime() < currentDate.getTime()) {
+                            System.out.println("Im there");
                             checkedAdmin.setLastTimeTexted(currentDate);
                             jedis.set(userKey, convertUserToJson(checkedAdmin));
                             Set<String> userKeys = jedis.keys("userDBMap:");
