@@ -111,15 +111,16 @@ public class BotController {
                         String userKey = USER_DB_MAP_KEY + ":" + AdminID;
                         User checkedAdmin = convertJsonToUser(jedis.get(userKey));
                         Date currentDate = new Date();
-                        Date checkAdminDate = DateUtil.addMinutes(checkedAdmin.getLastTimeTexted(), 5);
+                        Date checkAdminDate = DateUtil.addMinutes(checkedAdmin.getLastTimeTexted(), 2);
                         System.out.println("Im not there");
                         if (checkAdminDate.getTime() < currentDate.getTime()) {
                             System.out.println("Im there");
                             checkedAdmin.setLastTimeTexted(currentDate);
                             jedis.set(userKey, convertUserToJson(checkedAdmin));
                             System.out.println("Admin done");
-                            Set<String> userKeys = jedis.keys("userDBMap:");
+                            Set<String> userKeys = jedis.keys("userDBMap:*");
                             System.out.println("Keys done");
+                            System.out.println(userKeys.size());
                             for (String keyForUser : userKeys) {
                                 System.out.println("In the keys");
                                 System.out.println(keyForUser);
@@ -317,7 +318,9 @@ public class BotController {
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
-                                bot.execute(new SendMessage(playerId, "<b>GO!</b>").parseMode(HTML));
+                                Keyboard replyKeyboardMarkup = (Keyboard) new ReplyKeyboardMarkup(
+                                        new String[]{"Get Signal"});
+                                bot.execute(new SendMessage(playerId, "<b>GO!</b>").parseMode(HTML).replyMarkup(replyKeyboardMarkup));
                             };
                             new Thread(signalGeneratorTask).start();
                         }
