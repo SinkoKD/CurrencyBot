@@ -107,30 +107,30 @@ public class BotController {
 //                    User Im = new User("NoAdmin", "430823029", true, true, adminDate);
 //                    jedis.set(userKeyIm, convertUserToJson(Im));
 
-                    try {
-                        String userKey = USER_DB_MAP_KEY + ":" + AdminID;
-                        User checkedAdmin = convertJsonToUser(jedis.get(userKey));
-                        Date currentDate = new Date();
-                        Date checkAdminDate = DateUtil.addMinutes(checkedAdmin.getLastTimeTexted(), 2);
-                        System.out.println("Im not there");
-                        if (checkAdminDate.getTime() < currentDate.getTime()) {
-                            System.out.println("Im there");
-                            checkedAdmin.setLastTimeTexted(currentDate);
-                            jedis.set(userKey, convertUserToJson(checkedAdmin));
-                            System.out.println("Admin done");
-                            Set<String> userKeys = jedis.keys("userDBMap:*");
-                            System.out.println("Keys done");
-                            System.out.println(userKeys.size());
-                            for (String keyForUser : userKeys) {
-                                System.out.println("In the keys");
-                                System.out.println(keyForUser);
-                                User currentUser = convertJsonToUser(jedis.get(keyForUser));
-                                System.out.println(currentUser.getName());
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+//                    try {
+//                        String userKey = USER_DB_MAP_KEY + ":" + AdminID;
+//                        User checkedAdmin = convertJsonToUser(jedis.get(userKey));
+//                        Date currentDate = new Date();
+//                        Date checkAdminDate = DateUtil.addMinutes(checkedAdmin.getLastTimeTexted(), 2);
+//                        System.out.println("Im not there");
+//                        if (checkAdminDate.getTime() < currentDate.getTime()) {
+//                            System.out.println("Im there");
+//                            checkedAdmin.setLastTimeTexted(currentDate);
+//                            jedis.set(userKey, convertUserToJson(checkedAdmin));
+//                            System.out.println("Admin done");
+//                            Set<String> userKeys = jedis.keys("userDBMap:*");
+//                            System.out.println("Keys done");
+//                            System.out.println(userKeys.size());
+//                            for (String keyForUser : userKeys) {
+//                                System.out.println("In the keys");
+//                                System.out.println(keyForUser);
+//                                User currentUser = convertJsonToUser(jedis.get(keyForUser));
+//                                System.out.println(currentUser.getName());
+//                            }
+//                        }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
 
                     if (String.valueOf(playerId).equals(AdminID)) {
                         if (messageText.startsWith("A") || messageText.startsWith("a") || messageText.startsWith("Ф") || messageText.startsWith("ф")) {
