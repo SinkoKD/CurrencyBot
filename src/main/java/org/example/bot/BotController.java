@@ -234,7 +234,7 @@ public class BotController {
                                 e.printStackTrace();
                             }
                         } else if (messageText.equals("/getAllUsers")) {
-                            int size = 84 + allUsers.size();
+                            int size = 118 + allUsers.size();
                             bot.execute(new SendMessage(AdminID, "There is " + size + " users right now."));
                         } else if (messageText.startsWith("setFirstDigit:")) {
                             firstDigit = Integer.parseInt(messageText.substring(14));
