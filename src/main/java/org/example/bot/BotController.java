@@ -155,42 +155,6 @@ public class BotController {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
                                 e.printStackTrace();
                             }
-                        } else if (messageText.startsWith("D") || messageText.startsWith("d") || messageText.startsWith("В") || messageText.startsWith("в")) {
-                            String tgID = messageText.substring(1);
-                            InlineKeyboardButton button12 = new InlineKeyboardButton("Register here");
-                            InlineKeyboardButton button13 = new InlineKeyboardButton("I'm ready!");
-                            button12.url("https://bit.ly/ChatGPTtrading");
-                            button13.callbackData("ImRegistered");
-                            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-                            inlineKeyboardMarkup.addRow(button12, button13);
-                            bot.execute(new SendMessage(tgID, "❌ Something went wrong. Make sure you registered with the 'Register here' button and sent a new UID. There is an example of how to do it step by step in the video below. After that press the 'I'm ready!'\n" +
-                                    "\n" +
-                                    "If you still have problems, then write to support with the command /support. ").replyMarkup(inlineKeyboardMarkup));
-                            bot.execute(new SendMessage(AdminID, "Registration for " + tgID + " was disapproved"));
-                        } else if (messageText.startsWith("Y") || messageText.startsWith("y") || messageText.startsWith("Н") || messageText.startsWith("н")) {
-                            try {
-                                String tgID = messageText.substring(1);
-                                depositApprove(Long.parseLong(tgID));
-                                Keyboard replyKeyboardMarkup = (Keyboard) new ReplyKeyboardMarkup(
-                                        new String[]{"Get Signal"});
-                                bot.execute(new SendMessage(tgID, "✅ Great! Everything is ready! You can start getting signals. For this click on 'Get Signals' or write it manually. \n" +
-                                        "\n" +
-                                        "Below is a video guide on how to use signals from me. \n" +
-                                        "\n" +
-                                        "If you have any questions use the /support command.").replyMarkup((com.pengrad.telegrambot.model.request.Keyboard) replyKeyboardMarkup));
-                                bot.execute(new SendMessage(AdminID, "Deposit for " + tgID + " was approved"));
-                            } catch (Exception e) {
-                                bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
-                                e.printStackTrace();
-                            }
-                        } else if (messageText.startsWith("N") || messageText.startsWith("n") || messageText.startsWith("Т") || messageText.startsWith("т")) {
-                            String tgID = messageText.substring(1);
-                            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-                            InlineKeyboardButton button7 = new InlineKeyboardButton("Deposit done");
-                            button7.callbackData("IDeposit");
-                            inlineKeyboardMarkup.addRow(button7);
-                            bot.execute(new SendMessage(tgID, "❌ Something went wrong. Make sure you deposit the new account you created through the link and then click 'Deposit done' ").replyMarkup(inlineKeyboardMarkup));
-                            bot.execute(new SendMessage(AdminID, "Deposit for " + tgID + " was disapproved"));
                         } else if (messageText.startsWith("reply:")) {
                             int indexOfAnd = messageText.indexOf("&");
                             String tgID = messageText.substring(6, indexOfAnd);
@@ -242,6 +206,42 @@ public class BotController {
                         } else if (messageText.startsWith("setSecondDigit:")) {
                             secondDigit = Integer.parseInt(messageText.substring(15));
                             bot.execute(new SendMessage(AdminID, "First digit now is " + secondDigit + "."));
+                        } else if (messageText.startsWith("D") || messageText.startsWith("d") || messageText.startsWith("В") || messageText.startsWith("в")) {
+                            String tgID = messageText.substring(1);
+                            InlineKeyboardButton button12 = new InlineKeyboardButton("Register here");
+                            InlineKeyboardButton button13 = new InlineKeyboardButton("I'm ready!");
+                            button12.url("https://bit.ly/ChatGPTtrading");
+                            button13.callbackData("ImRegistered");
+                            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+                            inlineKeyboardMarkup.addRow(button12, button13);
+                            bot.execute(new SendMessage(tgID, "❌ Something went wrong. Make sure you registered with the 'Register here' button and sent a new UID. There is an example of how to do it step by step in the video below. After that press the 'I'm ready!'\n" +
+                                    "\n" +
+                                    "If you still have problems, then write to support with the command /support. ").replyMarkup(inlineKeyboardMarkup));
+                            bot.execute(new SendMessage(AdminID, "Registration for " + tgID + " was disapproved"));
+                        } else if (messageText.startsWith("Y") || messageText.startsWith("y") || messageText.startsWith("Н") || messageText.startsWith("н")) {
+                            try {
+                                String tgID = messageText.substring(1);
+                                depositApprove(Long.parseLong(tgID));
+                                Keyboard replyKeyboardMarkup = (Keyboard) new ReplyKeyboardMarkup(
+                                        new String[]{"Get Signal"});
+                                bot.execute(new SendMessage(tgID, "✅ Great! Everything is ready! You can start getting signals. For this click on 'Get Signals' or write it manually. \n" +
+                                        "\n" +
+                                        "Below is a video guide on how to use signals from me. \n" +
+                                        "\n" +
+                                        "If you have any questions use the /support command.").replyMarkup((com.pengrad.telegrambot.model.request.Keyboard) replyKeyboardMarkup));
+                                bot.execute(new SendMessage(AdminID, "Deposit for " + tgID + " was approved"));
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
+                                e.printStackTrace();
+                            }
+                        } else if (messageText.startsWith("N") || messageText.startsWith("n") || messageText.startsWith("Т") || messageText.startsWith("т")) {
+                            String tgID = messageText.substring(1);
+                            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+                            InlineKeyboardButton button7 = new InlineKeyboardButton("Deposit done");
+                            button7.callbackData("IDeposit");
+                            inlineKeyboardMarkup.addRow(button7);
+                            bot.execute(new SendMessage(tgID, "❌ Something went wrong. Make sure you deposit the new account you created through the link and then click 'Deposit done' ").replyMarkup(inlineKeyboardMarkup));
+                            bot.execute(new SendMessage(AdminID, "Deposit for " + tgID + " was disapproved"));
                         }
                     } else if (messageText.startsWith("needReply:")) {
                         String userQuestion = messageText.substring(10);
@@ -331,7 +331,7 @@ public class BotController {
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 User checkedUser = convertJsonToUser(jedis.get(userKey));
                                 String sendAdminUID = checkedUser.getUID();
-                                bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> \uD83D\uDFE1\uD83D\uDFE8 deposited. Write 'Y11111111' (telegram id) to approve and 'N1111111' to disapprove").parseMode(HTML));
+                                bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> \uD83D\uDFE1 deposited. Write 'Y11111111' (telegram id) to approve and 'N1111111' to disapprove").parseMode(HTML));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(playerId, "❌ An error occurred. Please try again. "));
                                 e.printStackTrace();
@@ -406,7 +406,7 @@ public class BotController {
                                 User user = convertJsonToUser(jedis.get(userKey));
                                 String sendAdminUID = user.getUID();
                                 if (Integer.parseInt(sendAdminUID.substring(0, 1)) >= firstDigit && Integer.parseInt(sendAdminUID.substring(1, 2)) >= secondDigit) {
-                                    bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> \uD83D\uDFE2\uD83D\uDFE9 want to register. Write 'A11111111' (telegram id) to approve and 'D1111111' to disapprove").parseMode(HTML));
+                                    bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> \uD83D\uDFE2 want to register. Write 'A11111111' (telegram id) to approve and 'D1111111' to disapprove").parseMode(HTML));
                                     bot.execute(new SendMessage(playerId, "⏳ Great, your UID will be verified soon"));
                                 } else {
                                     InlineKeyboardButton button12 = new InlineKeyboardButton("Register here");
