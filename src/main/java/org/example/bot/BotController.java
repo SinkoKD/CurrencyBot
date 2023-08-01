@@ -143,9 +143,9 @@ public class BotController {
                                 String tgID = messageText.substring(1);
                                 System.out.println(tgID);
                                 registrationApprove(Long.parseLong(tgID));
-                                bot.execute(new SendMessage(tgID, "✅ Great, your account is confirmed! The last step is to make any deposit by any convenient way. After that press the button 'Deposit done'.\n" +
+                                bot.execute(new SendMessage(tgID, "✅ Great, your account is confirmed! The last step is to make any deposit at least 50$ by any convenient way. After that press the button 'Deposit done'.\n" +
                                         "\n" +
-                                        "I would like to note that the recommended starting deposit of $50 - $150. But it is not necessary and is a tool for faster earnings. Also, if you deposit more than $50, use promo code 50START to get an extra 50% of your deposit. For example, with a deposit of 100$ you will get 50$ additional. It means that you will get 150$ in total.\n" +
+                                        "I would like to note that the recommended starting deposit of $50 - $150. Also use promo code 50START to get an extra 50% of your deposit. For example, with a deposit of 100$ you will get 50$ additional. It means that you will get 150$ in total.\n" +
                                         "\n" +
                                         "At the bottom there is a video instruction on how to top up the account.").replyMarkup(inlineKeyboardMarkup));
                                 bot.execute(new SendVideo(tgID, videoDepositFile));
@@ -240,7 +240,7 @@ public class BotController {
                             InlineKeyboardButton button7 = new InlineKeyboardButton("Deposit done");
                             button7.callbackData("IDeposit");
                             inlineKeyboardMarkup.addRow(button7);
-                            bot.execute(new SendMessage(tgID, "❌ Something went wrong. Make sure you deposit the new account you created through the link and then click 'Deposit done' ").replyMarkup(inlineKeyboardMarkup));
+                            bot.execute(new SendMessage(tgID, "❌ Something went wrong. Make sure you deposited at least 50$ to the new account you created through the link and then click 'Deposit done' ").replyMarkup(inlineKeyboardMarkup));
                             bot.execute(new SendMessage(AdminID, "Deposit for " + tgID + " was disapproved"));
                         }
                     } else if (messageText.startsWith("needReply:")) {
