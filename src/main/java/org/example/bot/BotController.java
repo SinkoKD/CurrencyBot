@@ -224,7 +224,7 @@ public class BotController {
                                 depositApprove(Long.parseLong(tgID));
                                 Keyboard replyKeyboardMarkup = (Keyboard) new ReplyKeyboardMarkup(
                                         new String[]{"Get Signal"});
-                                bot.execute(new SendMessage(tgID, "✅ Great! Everything is ready! You can start getting signals. For this click on 'Get Signals' or write it manually. \n" +
+                                bot.execute(new SendMessage(tgID, "✅ Great! Everything is ready! You can start getting signals. For this click on 'Get Signal' or write it manually. \n" +
                                         "\n" +
                                         "Below is a video guide on how to use signals from me. \n" +
                                         "\n" +
