@@ -164,7 +164,7 @@ public class BotController {
                             bot.execute(new SendMessage(AdminID, "Reply was sent"));
                         } else if (messageText.startsWith("deleteUser:")) {
                             try {
-                                String TGId = (messageText.substring(11));
+                                String TGId = USER_DB_MAP_KEY + ":" + (messageText.substring(11));
                                 jedis.del(TGId);
                                 bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " was fully deleted"));
                             } catch (Exception e) {
@@ -175,6 +175,7 @@ public class BotController {
                             try {
                                 String TGId = (messageText.substring(14));
                                 depositDisapprove(Long.parseLong(TGId));
+                                System.out.println(TGId);
                                 bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " got deposit disapprove"));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
@@ -184,7 +185,17 @@ public class BotController {
                             try {
                                 String TGId = (messageText.substring(19));
                                 registrationDisapprove(Long.parseLong(TGId));
+                                System.out.println(TGId);
                                 bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " got register disapprove"));
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
+                                e.printStackTrace();
+                            }
+                        } else if (messageText.startsWith("getUserName:")) {
+                            try {
+                                String TGId = USER_DB_MAP_KEY + ":" + (messageText.substring(12));
+                                User newUser = convertJsonToUser(jedis.get(TGId));
+                                bot.execute(new SendMessage(AdminID, "Name of user is: " + newUser.getName() +" his TG id: " + TGId));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
                                 e.printStackTrace();
