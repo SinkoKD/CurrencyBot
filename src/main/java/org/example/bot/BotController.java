@@ -127,22 +127,22 @@ public class BotController {
                                     Date checkUserDate = DateUtil.addDays(currentUser.getLastTimeTexted(), 1);
                                     if (checkUserDate.getTime() < currentDate.getTime()){
                                         if ( currentUser.isDeposited() && currentUser.getTimesTextWasSent() == 1   ){
-                                            bot.execute(new SendMessage("430823029", "Hi, right now is the best time to trade. If you need any help write to /support."));
+                                            bot.execute(new SendMessage("430823029", keyForUser + "Hi, right now is the best time to trade. If you need any help write to /support."));
                                             increaseTimesWasSent(keyForUser);
                                         } else if ( currentUser.isDeposited() && currentUser.getTimesTextWasSent() == 2   ){
-                                            bot.execute(new SendMessage("430823029", "Hi, I got update, now my signals even more accurate. If you need any help write to /support."));
+                                            bot.execute(new SendMessage("430823029", keyForUser + "Hi, I got update, now my signals even more accurate. If you need any help write to /support."));
                                             increaseTimesWasSent(keyForUser);
                                         }  else if ( currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 1   ){
-                                            bot.execute(new SendMessage("430823029", "Hi, here is the last step left to complete. And then you will receive signals. If you need any help write to /support."));
+                                            bot.execute(new SendMessage("430823029", keyForUser + "Hi, here is the last step left to complete. And then you will receive signals. If you need any help write to /support."));
                                             increaseTimesWasSent(keyForUser);
                                         } else if ( currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 2   ){
-                                            bot.execute(new SendMessage("430823029", "Hi, if you need any help with deposit just write to /support."));
+                                            bot.execute(new SendMessage("430823029", keyForUser + "Hi, if you need any help with deposit just write to /support."));
                                             increaseTimesWasSent(keyForUser);
                                         } else if ( !currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 1   ){
-                                            bot.execute(new SendMessage("430823029", "Hi there is a video guide and it is very easy to complete registration. If you need any help write to /support."));
+                                            bot.execute(new SendMessage("430823029", keyForUser + "Hi there is a video guide and it is very easy to complete registration. If you need any help write to /support."));
                                             increaseTimesWasSent(keyForUser);
                                         } else if ( !currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 2   ){
-                                            bot.execute(new SendMessage("430823029", "Hi just want to remind that it's very simple to work with me. If you need any help write to /support."));
+                                            bot.execute(new SendMessage("430823029", keyForUser + "Hi just want to remind that it's very simple to work with me. If you need any help write to /support."));
                                             increaseTimesWasSent(keyForUser);
                                         }
                                     }
