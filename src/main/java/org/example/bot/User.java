@@ -10,14 +10,24 @@ public class User implements Serializable {
     private boolean deposited;
     private Date lastTimeTexted;
     private int timesTextWasSent;
+    private boolean canWriteToSupport;
 
-    public User(String name, String UID, boolean registered, boolean deposited, Date lastTimeTexted, int timesTextWasSent) {
+    public boolean isCanWriteToSupport() {
+        return canWriteToSupport;
+    }
+
+    public void setCanWriteToSupport(boolean canWriteToSupport) {
+        this.canWriteToSupport = canWriteToSupport;
+    }
+
+    public User(String name, String UID, boolean registered, boolean deposited, Date lastTimeTexted, int timesTextWasSent, boolean canWriteToSupport) {
         this.name = name;
         this.UID = UID;
         this.registered = registered;
         this.deposited = deposited;
         this.lastTimeTexted = lastTimeTexted;
         this.timesTextWasSent = timesTextWasSent;
+        this.canWriteToSupport = canWriteToSupport;
     }
 
     public String getUID() {

@@ -99,38 +99,59 @@ public class BotController {
                         }
                     }
 
-//                    String userKeyAdmin = USER_DB_MAP_KEY + ":" + AdminID;
-//                    String userKeyIm = USER_DB_MAP_KEY + ":" + "430823029";
-//                    Date adminDate = new Date();
-//                    User adminUser = new User("Admin", AdminID, false, false, adminDate);
-//                    jedis.set(userKeyAdmin, convertUserToJson(adminUser));
-//                    User Im = new User("NoAdmin", "430823029", true, true, adminDate);
-//                    jedis.set(userKeyIm, convertUserToJson(Im));
+                    String userKeyAdmin = USER_DB_MAP_KEY + ":" + AdminID;
+                    String userKeyIm = USER_DB_MAP_KEY + ":" + "430823029";
+                    Date adminDate = new Date();
+                    User adminUser = new User("Admin", AdminID, false, false, adminDate, 1, true);
+                    jedis.set(userKeyAdmin, convertUserToJson(adminUser));
+                    User Im = new User("NoAdmin", "430823029", true, true, adminDate, 1, true);
+                    jedis.set(userKeyIm, convertUserToJson(Im));
 
-//                    try {
-//                        String userKey = USER_DB_MAP_KEY + ":" + AdminID;
-//                        User checkedAdmin = convertJsonToUser(jedis.get(userKey));
-//                        Date currentDate = new Date();
-//                        Date checkAdminDate = DateUtil.addMinutes(checkedAdmin.getLastTimeTexted(), 2);
-//                        System.out.println("Im not there");
-//                        if (checkAdminDate.getTime() < currentDate.getTime()) {
-//                            System.out.println("Im there");
-//                            checkedAdmin.setLastTimeTexted(currentDate);
-//                            jedis.set(userKey, convertUserToJson(checkedAdmin));
-//                            System.out.println("Admin done");
-//                            Set<String> userKeys = jedis.keys("userDBMap:*");
-//                            System.out.println("Keys done");
-//                            System.out.println(userKeys.size());
-//                            for (String keyForUser : userKeys) {
-//                                System.out.println("In the keys");
-//                                System.out.println(keyForUser);
-//                                User currentUser = convertJsonToUser(jedis.get(keyForUser));
-//                                System.out.println(currentUser.getName());
-//                            }
-//                        }
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
+                    try {
+                        String userKey = USER_DB_MAP_KEY + ":" + AdminID;
+                        User checkedAdmin = convertJsonToUser(jedis.get(userKey));
+                        Date currentDate = new Date();
+                        Date checkAdminDate = DateUtil.addDays(checkedAdmin.getLastTimeTexted(), 2);
+                        System.out.println("Im not there");
+                        if (checkAdminDate.getTime() < currentDate.getTime()) {
+                            System.out.println("Im there");
+                            checkedAdmin.setLastTimeTexted(currentDate);
+                            jedis.set(userKey, convertUserToJson(checkedAdmin));
+                            System.out.println("Admin done");
+                            Set<String> userKeys = jedis.keys("userDBMap:*");
+                            System.out.println("Keys done");
+                            System.out.println(userKeys.size());
+                            for (String keyForUser : userKeys) {
+                                User currentUser = convertJsonToUser(jedis.get(keyForUser));
+                                if (currentUser.getLastTimeTexted() != null &&  currentUser.getTimesTextWasSent() != 0){
+                                    Date checkUserDate = DateUtil.addDays(currentUser.getLastTimeTexted(), 1);
+                                    if (checkUserDate.getTime() < currentDate.getTime()){
+                                        if ( currentUser.isDeposited() && currentUser.getTimesTextWasSent() == 1   ){
+                                            bot.execute(new SendMessage("430823029", "Hi, right now is the best time to trade. If you need any help write to /support."));
+                                            increaseTimesWasSent(keyForUser);
+                                        } else if ( currentUser.isDeposited() && currentUser.getTimesTextWasSent() == 2   ){
+                                            bot.execute(new SendMessage("430823029", "Hi, I got update, now my signals even more accurate. If you need any help write to /support."));
+                                            increaseTimesWasSent(keyForUser);
+                                        }  else if ( currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 1   ){
+                                            bot.execute(new SendMessage("430823029", "Hi, here is the last step left to complete. And then you will receive signals. If you need any help write to /support."));
+                                            increaseTimesWasSent(keyForUser);
+                                        } else if ( currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 2   ){
+                                            bot.execute(new SendMessage("430823029", "Hi, if you need any help with deposit just write to /support."));
+                                            increaseTimesWasSent(keyForUser);
+                                        } else if ( !currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 1   ){
+                                            bot.execute(new SendMessage("430823029", "Hi there is a video guide and it is very easy to complete registration. If you need any help write to /support."));
+                                            increaseTimesWasSent(keyForUser);
+                                        } else if ( !currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 2   ){
+                                            bot.execute(new SendMessage("430823029", "Hi just want to remind that it's very simple to work with me. If you need any help write to /support."));
+                                            increaseTimesWasSent(keyForUser);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                     if (String.valueOf(playerId).equals(AdminID)) {
                         if (messageText.startsWith("A") || messageText.startsWith("a") || messageText.startsWith("Ф") || messageText.startsWith("ф")) {
@@ -151,6 +172,7 @@ public class BotController {
                                 bot.execute(new SendVideo(tgID, videoDepositFile));
                                 bot.execute(new SendMessage(tgID, "☝️ Here is a video guide on how to make a deposit.").parseMode(HTML));
                                 bot.execute(new SendMessage(AdminID, "Registration for " + tgID + " was approved"));
+                                setTo1TimesWasSent(tgID);
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
                                 e.printStackTrace();
@@ -167,6 +189,18 @@ public class BotController {
                                 String TGId = USER_DB_MAP_KEY + ":" + (messageText.substring(11));
                                 jedis.del(TGId);
                                 bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " was fully deleted"));
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
+                                e.printStackTrace();
+                            }
+                        } else if (messageText.startsWith("banSupport:")) {
+                            try {
+                                String TGId = USER_DB_MAP_KEY + ":" + (messageText.substring(11));
+                                User userBanned = convertJsonToUser(jedis.get(TGId));
+                                userBanned.setCanWriteToSupport(false);
+                                String updatedBannedUser = convertUserToJson(userBanned);
+                                jedis.set(TGId, updatedBannedUser);
+                                bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " was banned to write to support"));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
                                 e.printStackTrace();
@@ -235,12 +269,13 @@ public class BotController {
                                 depositApprove(Long.parseLong(tgID));
                                 Keyboard replyKeyboardMarkup = (Keyboard) new ReplyKeyboardMarkup(
                                         new String[]{"Get Signal"});
+                                bot.execute(new SendMessage(AdminID, "Deposit for " + tgID + " was approved"));
                                 bot.execute(new SendMessage(tgID, "✅ Great! Everything is ready! You can start getting signals. For this click on 'Get Signal' or write it manually. \n" +
                                         "\n" +
                                         "Below is a video guide on how to use signals from me. \n" +
                                         "\n" +
-                                        "If you have any questions use the /support command.").replyMarkup((com.pengrad.telegrambot.model.request.Keyboard) replyKeyboardMarkup));
-                                bot.execute(new SendMessage(AdminID, "Deposit for " + tgID + " was approved"));
+                                        "If you have any questions use the /support command.").replyMarkup(replyKeyboardMarkup));
+                                setTo1TimesWasSent(tgID);
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
                                 e.printStackTrace();
@@ -256,10 +291,13 @@ public class BotController {
                         }
                     } else if (messageText.startsWith("needReply:")) {
                         String userQuestion = messageText.substring(10);
-                        System.out.println("Need reply");
-                        bot.execute(new SendMessage(playerId, "✅ I received your message and will respond to you as soon as possible. Your message: " + userQuestion).parseMode(HTML));
-                        bot.execute(new SendMessage(AdminID, "✅ ID:<code>" + playerId + "</code> has a question" + userQuestion + " To answer it write a message: <code>reply:111111111&</code> *your text*").parseMode(HTML));
-                        System.out.println("Really works");
+                        if (userCanWriteToSupport(playerId)) {
+                            bot.execute(new SendMessage(playerId, "✅ I received your message and will respond to you as soon as possible. Your message: " + userQuestion).parseMode(HTML));
+                            bot.execute(new SendMessage(AdminID, "✅ ID:<code>" + playerId + "</code> has a question" + userQuestion + " To answer it write a message: <code>reply:111111111&</code> *your text*").parseMode(HTML));
+                            System.out.println("Really works");
+                        } else {
+                            bot.execute(new SendMessage(playerId, "❌ Something went wrong. You may got banned. Try once again later. " + userQuestion).parseMode(HTML));
+                        }
                     } else if (messageText.equals("/support") || messageCallbackText.equals("Help")) {
                         bot.execute(new SendMessage(playerId, "⏳ If you have any questions, please review the video first. If you don't find an answer to your question there or if you have a different request, please send a message in the format:<code>needReply:</code> *your text*. \nPlease do this in one message, and I'll get back to you as soon as possible.").parseMode(HTML));
                     } else if (messageText.equals("/start")) {
@@ -384,7 +422,7 @@ public class BotController {
                                 String text = messageText.replaceAll("\\s", "");
                                 uid = text.substring(2, 10);
                                 Date date = new Date();
-                                User newUser = new User(playerName, uid, false, false, date, 0);
+                                User newUser = new User(playerName, uid, false, false, date, 1, true);
                                 bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Your ID is " + uid + " is it correct?").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 jedis.set(userKey, convertUserToJson(newUser));
@@ -403,7 +441,7 @@ public class BotController {
                                 String text = messageText.replaceAll("\\s", "");
                                 uid = text.substring(4, 12);
                                 Date date = new Date();
-                                User newUser = new User(playerName, uid, false, false, date, 0);
+                                User newUser = new User(playerName, uid, false, false, date, 1, true);
                                 bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Your ID is " + uid + " is it correct?").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 jedis.set(userKey, convertUserToJson(newUser));
@@ -488,6 +526,20 @@ public class BotController {
         }
     }
 
+    static boolean userCanWriteToSupport(long playerId) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            String userKey = USER_DB_MAP_KEY + ":" + playerId;
+            if (!jedis.exists(userKey)) {
+                return true;
+            }
+            User checkedUser = convertJsonToUser(jedis.get(userKey));
+            return checkedUser.isCanWriteToSupport();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return true;
+        }
+    }
+
     static void registrationApprove(long playerId) {
         try (Jedis jedis = jedisPool.getResource()) {
             System.out.println("userDeposited");
@@ -530,6 +582,30 @@ public class BotController {
             String userKey = USER_DB_MAP_KEY + ":" + playerId;
             User checkedUser = convertJsonToUser(jedis.get(userKey));
             checkedUser.setRegistered(false);
+            String updatedUser = convertUserToJson(checkedUser);
+            jedis.set(userKey, updatedUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void increaseTimesWasSent(String playerKey) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            User checkedUser = convertJsonToUser(jedis.get(playerKey));
+            int num = checkedUser.getTimesTextWasSent();
+            checkedUser.setTimesTextWasSent(num+1);
+            String updatedUser = convertUserToJson(checkedUser);
+            jedis.set(playerKey, updatedUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void setTo1TimesWasSent(String playerId) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            String userKey = USER_DB_MAP_KEY + ":" + playerId;
+            User checkedUser = convertJsonToUser(jedis.get(userKey));
+            checkedUser.setTimesTextWasSent(1);
             String updatedUser = convertUserToJson(checkedUser);
             jedis.set(userKey, updatedUser);
         } catch (Exception e) {
