@@ -197,7 +197,7 @@ public class BotController {
                             try {
                                 String TGId = USER_DB_MAP_KEY + ":" + (messageText.substring(11));
                                 User userBanned = convertJsonToUser(jedis.get(TGId));
-                                userBanned.setCanWriteToSupport(false);
+                                userBanned.setCanWriteToSupport(true);
                                 String updatedBannedUser = convertUserToJson(userBanned);
                                 jedis.set(TGId, updatedBannedUser);
                                 bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " was banned to write to support"));
