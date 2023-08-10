@@ -291,7 +291,7 @@ public class BotController {
                         }
                     } else if (messageText.startsWith("needReply:")) {
                         String userQuestion = messageText.substring(10);
-                        if (userCanWriteToSupport(playerId)) {
+                        if (!userCanWriteToSupport(playerId)) {
                             bot.execute(new SendMessage(playerId, "✅ I received your message and will respond to you as soon as possible. Your message: " + userQuestion).parseMode(HTML));
                             bot.execute(new SendMessage(AdminID, "✅ ID:<code>" + playerId + "</code> has a question" + userQuestion + " To answer it write a message: <code>reply:111111111&</code> *your text*").parseMode(HTML));
                             System.out.println("Really works");
@@ -422,7 +422,7 @@ public class BotController {
                                 String text = messageText.replaceAll("\\s", "");
                                 uid = text.substring(2, 10);
                                 Date date = new Date();
-                                User newUser = new User(playerName, uid, false, false, date, 1, true);
+                                User newUser = new User(playerName, uid, false, false, date, 1, false);
                                 bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Your ID is " + uid + " is it correct?").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 jedis.set(userKey, convertUserToJson(newUser));
@@ -441,7 +441,7 @@ public class BotController {
                                 String text = messageText.replaceAll("\\s", "");
                                 uid = text.substring(4, 12);
                                 Date date = new Date();
-                                User newUser = new User(playerName, uid, false, false, date, 1, true);
+                                User newUser = new User(playerName, uid, false, false, date, 1, false);
                                 bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Your ID is " + uid + " is it correct?").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 jedis.set(userKey, convertUserToJson(newUser));
@@ -530,13 +530,13 @@ public class BotController {
         try (Jedis jedis = jedisPool.getResource()) {
             String userKey = USER_DB_MAP_KEY + ":" + playerId;
             if (!jedis.exists(userKey)) {
-                return true;
+                return false;
             }
             User checkedUser = convertJsonToUser(jedis.get(userKey));
             return checkedUser.isCanWriteToSupport();
         } catch (Exception e) {
             e.printStackTrace();
-            return true;
+            return false;
         }
     }
 
@@ -581,7 +581,7 @@ public class BotController {
         try (Jedis jedis = jedisPool.getResource()) {
             String userKey = USER_DB_MAP_KEY + ":" + playerId;
             User checkedUser = convertJsonToUser(jedis.get(userKey));
-            checkedUser.setRegistered(false);
+            checkedUser.setRegistered(true);
             String updatedUser = convertUserToJson(checkedUser);
             jedis.set(userKey, updatedUser);
         } catch (Exception e) {
