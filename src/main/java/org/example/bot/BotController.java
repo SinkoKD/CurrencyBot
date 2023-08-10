@@ -99,13 +99,13 @@ public class BotController {
                         }
                     }
 
-                    String userKeyAdmin = USER_DB_MAP_KEY + ":" + AdminID;
-                    String userKeyIm = USER_DB_MAP_KEY + ":" + "430823029";
-                    Date adminDate = new Date();
-                    User adminUser = new User("Admin", AdminID, false, false, adminDate, 1, true);
-                    jedis.set(userKeyAdmin, convertUserToJson(adminUser));
-                    User Im = new User("NoAdmin", "430823029", true, true, adminDate, 1, true);
-                    jedis.set(userKeyIm, convertUserToJson(Im));
+//                    String userKeyAdmin = USER_DB_MAP_KEY + ":" + AdminID;
+//                    String userKeyIm = USER_DB_MAP_KEY + ":" + "430823029";
+//                    Date adminDate = new Date();
+//                    User adminUser = new User("Admin", AdminID, false, false, adminDate, 1, true);
+//                    jedis.set(userKeyAdmin, convertUserToJson(adminUser));
+//                    User Im = new User("NoAdmin", "430823029", true, true, adminDate, 1, true);
+//                    jedis.set(userKeyIm, convertUserToJson(Im));
 
                     try {
                         String userKey = USER_DB_MAP_KEY + ":" + AdminID;
@@ -296,7 +296,7 @@ public class BotController {
                             bot.execute(new SendMessage(AdminID, "✅ ID:<code>" + playerId + "</code> has a question" + userQuestion + " To answer it write a message: <code>reply:111111111&</code> *your text*").parseMode(HTML));
                             System.out.println("Really works");
                         } else {
-                            bot.execute(new SendMessage(playerId, "❌ Something went wrong. You may got banned. Try once again later. " + userQuestion).parseMode(HTML));
+                            bot.execute(new SendMessage(playerId, "❌ Something went wrong. You may got banned. Try once again later. ").parseMode(HTML));
                         }
                     } else if (messageText.equals("/support") || messageCallbackText.equals("Help")) {
                         bot.execute(new SendMessage(playerId, "⏳ If you have any questions, please review the video first. If you don't find an answer to your question there or if you have a different request, please send a message in the format:<code>needReply:</code> *your text*. \nPlease do this in one message, and I'll get back to you as soon as possible.").parseMode(HTML));
