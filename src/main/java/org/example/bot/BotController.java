@@ -107,6 +107,7 @@ public class BotController {
 //                    jedis.set(userKeyAdmin, convertUserToJson(adminUser));
 //                    User Im = new User("NoAdmin", "430823029", true, true, adminDate, 1, true);
 //                    jedis.set(userKeyIm, convertUserToJson(Im));
+
                     String test = "userDBMap:1544691874".substring(10);
                     System.out.println(test);
 
