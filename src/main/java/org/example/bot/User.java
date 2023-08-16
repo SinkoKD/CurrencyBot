@@ -9,8 +9,12 @@ public class User implements Serializable {
     private boolean registered;
     private boolean deposited;
     private Date lastTimeTexted;
+    private Date lastTimePressedDeposit;
     private int timesTextWasSent;
     private boolean canWriteToSupport;
+    private boolean canPressDeposit;
+    private boolean canPressRegister;
+
 
     public boolean isCanWriteToSupport() {
         return canWriteToSupport;
@@ -20,14 +24,43 @@ public class User implements Serializable {
         this.canWriteToSupport = canWriteToSupport;
     }
 
-    public User(String name, String UID, boolean registered, boolean deposited, Date lastTimeTexted, int timesTextWasSent, boolean canWriteToSupport) {
+    public User(String name, String UID, boolean registered, boolean deposited, Date lastTimeTexted,
+                Date lastTimePressedDeposit, int timesTextWasSent, boolean canWriteToSupport,
+                boolean canPressDeposit, boolean canPressRegister) {
         this.name = name;
         this.UID = UID;
         this.registered = registered;
         this.deposited = deposited;
         this.lastTimeTexted = lastTimeTexted;
+        this.lastTimePressedDeposit = lastTimePressedDeposit;
         this.timesTextWasSent = timesTextWasSent;
         this.canWriteToSupport = canWriteToSupport;
+        this.canPressDeposit = canPressDeposit;
+        this.canPressRegister = canPressRegister;
+    }
+
+    public Date getLastTimePressedDeposit() {
+        return lastTimePressedDeposit;
+    }
+
+    public void setLastTimePressedDeposit(Date lastTimePressedDeposit) {
+        this.lastTimePressedDeposit = lastTimePressedDeposit;
+    }
+
+    public boolean isCanPressDeposit() {
+        return canPressDeposit;
+    }
+
+    public void setCanPressDeposit(boolean canPressDeposit) {
+        this.canPressDeposit = canPressDeposit;
+    }
+
+    public boolean isCanPressRegister() {
+        return canPressRegister;
+    }
+
+    public void setCanPressRegister(boolean canPressRegister) {
+        this.canPressRegister = canPressRegister;
     }
 
     public String getUID() {
