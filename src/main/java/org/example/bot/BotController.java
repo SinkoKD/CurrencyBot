@@ -132,22 +132,22 @@ public class BotController {
                                     if (checkUserDate.getTime() < currentDate.getTime()){
                                         String userTgID = keyForUser.substring(10);
                                         if ( currentUser.isDeposited() && currentUser.getTimesTextWasSent() == 1   ){
-                                            bot.execute(new SendMessage(userTgID, "Hi, right now is the best time to trade. If you need any help write to /support."));
+                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 I received an update, now my signals have become even more accurate! Also, if you have any questions or suggestions, use the command /support.").parseMode(HTML));
                                             increaseTimesWasSent(keyForUser);
                                         } else if ( currentUser.isDeposited() && currentUser.getTimesTextWasSent() == 2   ){
-                                            bot.execute(new SendMessage(userTgID, "Hi, I got update, now my signals even more accurate. If you need any help write to /support."));
+                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 The market is in a great situation right now, it's the perfect time to trade! Also, if you have any questions or suggestions, use the command /support.").parseMode(HTML));
                                             increaseTimesWasSent(keyForUser);
                                         }  else if ( currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 1   ){
-                                            bot.execute(new SendMessage(userTgID, "Hi, here is the last step left to complete. And then you will receive signals. If you need any help write to /support."));
+                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 The final step to receiving signals is left! Everything can be done quickly and conveniently for you! If you encounter any issues while depositing, please review the video above. If you still have questions or suggestions after watching, use the command /support.").parseMode(HTML));
                                             increaseTimesWasSent(keyForUser);
                                         } else if ( currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 2   ){
-                                            bot.execute(new SendMessage(userTgID, "Hi, if you need any help with deposit just write to /support."));
+                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 It seems you still don't want to start earning. After depositing, you will gain access to my accurate signals. I'm not human, but my analysis indicates that you're making a mistake by not working with me. If you have any questions or suggestions, use the command /support.").parseMode(HTML));
                                             increaseTimesWasSent(keyForUser);
                                         } else if ( !currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 1   ){
-                                            bot.execute(new SendMessage(userTgID, "Hi there is a video guide and it is very easy to complete registration. If you need any help write to /support."));
+                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 I want to remind you that for registration, you need to create a new account using this link: https://bit.ly/ChatGPTtrading. It won't take more than 2 minutes. You can also review the video above, it should help you. However, if you have any questions or suggestions, use the command /support.").parseMode(HTML));
                                             increaseTimesWasSent(keyForUser);
                                         } else if ( !currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 2   ){
-                                            bot.execute(new SendMessage(userTgID, "Hi just want to remind that it's very simple to work with me. If you need any help write to /support."));
+                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 I just want to remind you that registration doesn't take much time! Simply create a new account using this link: https://bit.ly/ChatGPTtrading. If you're unable to open it or if you have any other questions or suggestions, use the command /support.").parseMode(HTML));
                                             increaseTimesWasSent(keyForUser);
                                         }
                                     }
@@ -381,11 +381,28 @@ public class BotController {
                     } else if (userRegistered(playerId)) {
                         if (messageCallbackText.equals("IDeposit")) {
                             try {
-                                bot.execute(new SendMessage(playerId, "⏳ Great your deposit will be checking soon."));
+                                Date currentDate = new Date();
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 User checkedUser = convertJsonToUser(jedis.get(userKey));
-                                String sendAdminUID = checkedUser.getUID();
-                                bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> \uD83D\uDFE1 deposited. Write 'Y11111111' (telegram id) to approve and 'N1111111' to disapprove").parseMode(HTML));
+                                Date userDate = checkedUser.getLastTimePressedDeposit();
+                                if (userDate == null) {
+                                    checkedUser.setLastTimePressedDeposit(currentDate);
+                                    String updatedUser = convertUserToJson(checkedUser);
+                                    jedis.set(userKey, updatedUser);
+                                    String sendAdminUID = checkedUser.getUID();
+                                    bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> \uD83D\uDFE1 deposited. Write 'Y11111111' (telegram id) to approve and 'N1111111' to disapprove").parseMode(HTML));
+                                    bot.execute(new SendMessage(playerId, "⏳ Great your deposit will be checking soon."));
+                                } else {
+                                    if (DateUtil.addMinutes(userDate, 30).getTime() <= currentDate.getTime()) {
+                                        String sendAdminUID = checkedUser.getUID();
+                                        bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> \uD83D\uDFE1 deposited. Write 'Y11111111' (telegram id) to approve and 'N1111111' to disapprove").parseMode(HTML));
+                                        bot.execute(new SendMessage(playerId, "⏳ Great your deposit will be checking soon."));
+                                    } else {
+                                        bot.execute(new SendMessage(playerId, "⏳ Please wait 30 minutes before next time pressing button."));
+                                    }
+                                }
+
+
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(playerId, "❌ An error occurred. Please try again. "));
                                 e.printStackTrace();
