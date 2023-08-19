@@ -60,7 +60,7 @@ public class BotController {
                     String messageCallbackText = "";
                     String uid;
                     int firstDigit = 6;
-                    int secondDigit = 3;
+                    int secondDigit = 5;
                     int messageId;
                     Path resourcePath = Paths.get("src/main/resources");
                     File videoDepositFile = resourcePath.resolve("depositTutorial.mp4").toFile();
