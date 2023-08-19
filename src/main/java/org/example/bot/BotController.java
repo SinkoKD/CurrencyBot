@@ -397,6 +397,9 @@ public class BotController {
                                         String sendAdminUID = checkedUser.getUID();
                                         bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> \uD83D\uDFE1 deposited. Write 'Y11111111' (telegram id) to approve and 'N1111111' to disapprove").parseMode(HTML));
                                         bot.execute(new SendMessage(playerId, "⏳ Great your deposit will be checking soon."));
+                                        checkedUser.setLastTimePressedDeposit(currentDate);
+                                        String updatedUser = convertUserToJson(checkedUser);
+                                        jedis.set(userKey, updatedUser);
                                     } else {
                                         bot.execute(new SendMessage(playerId, "⏳ Please wait 30 minutes before next time pressing button."));
                                     }
@@ -444,7 +447,8 @@ public class BotController {
                                 String text = messageText.replaceAll("\\s", "");
                                 uid = text.substring(2, 10);
                                 Date date = new Date();
-                                User newUser = new User(playerName, uid, false, false, date, date, 1, false, false, false);
+                                Date depositDate = DateUtil.addDays(date, -1);
+                                User newUser = new User(playerName, uid, false, false, date, depositDate, 1, false, false, false);
                                 bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Your ID is " + uid + " is it correct?").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 jedis.set(userKey, convertUserToJson(newUser));
@@ -463,7 +467,8 @@ public class BotController {
                                 String text = messageText.replaceAll("\\s", "");
                                 uid = text.substring(4, 12);
                                 Date date = new Date();
-                                User newUser = new User(playerName, uid, false, false, date, date, 1, false, false, false);
+                                Date depositDate = DateUtil.addDays(date, -1);
+                                User newUser = new User(playerName, uid, false, false, date, depositDate, 1, false, false, false);
                                 bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Your ID is " + uid + " is it correct?").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 jedis.set(userKey, convertUserToJson(newUser));
