@@ -210,6 +210,19 @@ public class BotController {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
                                 e.printStackTrace();
                             }
+                        } else if (messageText.startsWith("banDeposit30:")) {
+                            try {
+                                String TGId = USER_DB_MAP_KEY + ":" + (messageText.substring(13));
+                                User userBanned = convertJsonToUser(jedis.get(TGId));
+                                Date currentDate = new Date();
+                                userBanned.setLastTimePressedDeposit(DateUtil.addMinutes(currentDate, 30));
+                                String updatedBannedUser = convertUserToJson(userBanned);
+                                jedis.set(TGId, updatedBannedUser);
+                                bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " was banned to write to support"));
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
+                                e.printStackTrace();
+                            }
                         } else if (messageText.startsWith("deleteDeposit:")) {
                             try {
                                 String TGId = (messageText.substring(14));
@@ -393,13 +406,10 @@ public class BotController {
                                     bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> \uD83D\uDFE1 deposited. Write 'Y11111111' (telegram id) to approve and 'N1111111' to disapprove").parseMode(HTML));
                                     bot.execute(new SendMessage(playerId, "⏳ Great your deposit will be checking soon."));
                                 } else {
-                                    if (DateUtil.addMinutes(userDate, 30).getTime() <= currentDate.getTime()) {
+                                    if (userDate.getTime() <= currentDate.getTime()) {
                                         String sendAdminUID = checkedUser.getUID();
                                         bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> \uD83D\uDFE1 deposited. Write 'Y11111111' (telegram id) to approve and 'N1111111' to disapprove").parseMode(HTML));
                                         bot.execute(new SendMessage(playerId, "⏳ Great your deposit will be checking soon."));
-                                        checkedUser.setLastTimePressedDeposit(currentDate);
-                                        String updatedUser = convertUserToJson(checkedUser);
-                                        jedis.set(userKey, updatedUser);
                                     } else {
                                         bot.execute(new SendMessage(playerId, "⏳ Please wait 30 minutes before next time pressing button."));
                                     }
