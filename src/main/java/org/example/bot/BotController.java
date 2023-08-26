@@ -1,6 +1,5 @@
 package org.example.bot;
 
-import com.google.gson.Gson;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
@@ -100,13 +99,13 @@ public class BotController {
                         }
                     }
 
-//                    String userKeyAdmin = USER_DB_MAP_KEY + ":" + AdminID;
-//                    String userKeyIm = USER_DB_MAP_KEY + ":" + "430823029";
-//                    Date adminDate = new Date();
-//                    User adminUser = new User("Admin", AdminID, false, false, adminDate, 1, true);
-//                    jedis.set(userKeyAdmin, convertUserToJson(adminUser));
-//                    User Im = new User("NoAdmin", "430823029", true, true, adminDate, 1, true);
-//                    jedis.set(userKeyIm, convertUserToJson(Im));
+                    String userKeyAdmin = USER_DB_MAP_KEY + ":" + AdminID;
+                    String userKeyIm = USER_DB_MAP_KEY + ":" + "430823029";
+                    Date adminDate = new Date();
+                    User adminUser2 = new User("Admin", "64", false, false, adminDate, adminDate, 1, false, false, false);
+                    jedis.set(userKeyAdmin, convertUserToJson(adminUser2));
+                    //        User Im = new User("NoAdmin", "430823029", true, true, adminDate, 1, true);
+                    //       jedis.set(userKeyIm, convertUserToJson(Im));
 
                     String test = "userDBMap:1544691874".substring(10);
                     System.out.println(test);
@@ -127,27 +126,27 @@ public class BotController {
                             System.out.println(userKeys.size());
                             for (String keyForUser : userKeys) {
                                 User currentUser = convertJsonToUser(jedis.get(keyForUser));
-                                if (currentUser.getLastTimeTexted() != null &&  currentUser.getTimesTextWasSent() != 0){
+                                if (currentUser.getLastTimeTexted() != null && currentUser.getTimesTextWasSent() != 0) {
                                     Date checkUserDate = DateUtil.addDays(currentUser.getLastTimeTexted(), 1);
-                                    if (checkUserDate.getTime() < currentDate.getTime()){
+                                    if (checkUserDate.getTime() < currentDate.getTime()) {
                                         String userTgID = keyForUser.substring(10);
-                                        if ( currentUser.isDeposited() && currentUser.getTimesTextWasSent() == 1   ){
-                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 I received an update, now my signals have become even more accurate! Also, if you have any questions or suggestions, use the command /support.").parseMode(HTML));
+                                        if (currentUser.isDeposited() && currentUser.getTimesTextWasSent() == 1) {
+                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 I received an update, now my signals have become even more accurate! This is a great opportunity to earn money. Try trading with me for the next 8 hours. ").parseMode(HTML));
                                             increaseTimesWasSent(keyForUser);
-                                        } else if ( currentUser.isDeposited() && currentUser.getTimesTextWasSent() == 2   ){
-                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 The market is in a great situation right now, it's the perfect time to trade! Also, if you have any questions or suggestions, use the command /support.").parseMode(HTML));
+                                        } else if (currentUser.isDeposited() && currentUser.getTimesTextWasSent() == 2) {
+                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 The market is in a fantastic state at the moment. It's the ideal time to trade and make easy money! Only 4 hours left until the market is awesome.").parseMode(HTML));
                                             increaseTimesWasSent(keyForUser);
-                                        }  else if ( currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 1   ){
-                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 The final step to receiving signals is left! Everything can be done quickly and conveniently for you! If you encounter any issues while depositing, please review the video above. If you still have questions or suggestions after watching, use the command /support.").parseMode(HTML));
+                                        } else if (currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 1) {
+                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 The final step to receiving signals is left! Everything can be done quickly and conveniently for you! If you encounter any issues while depositing, please review the video above. Also use promo code 50START to receive bonus to your deposit.").parseMode(HTML));
                                             increaseTimesWasSent(keyForUser);
-                                        } else if ( currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 2   ){
-                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 It seems you still don't want to start earning. After depositing, you will gain access to my accurate signals. I'm not human, but my analysis indicates that you're making a mistake by not working with me. If you have any questions or suggestions, use the command /support.").parseMode(HTML));
+                                        } else if (currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 2) {
+                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 It seems you still don't want to start earning. After depositing, you will gain access to my accurate signals. I'm not human, but my analysis indicates that you're making a mistake by not working with me.").parseMode(HTML));
                                             increaseTimesWasSent(keyForUser);
-                                        } else if ( !currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 1   ){
-                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 I want to remind you that for registration, you need to create a new account using this link: https://bit.ly/ChatGPTtrading. It won't take more than 2 minutes. You can also review the video above, it should help you. However, if you have any questions or suggestions, use the command /support.").parseMode(HTML));
+                                        } else if (!currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 1) {
+                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 I want to remind you that for registration, you need to create a new account using this link: https://bit.ly/ChatGPTtrading. It won't take more than 2 minutes. You can also review the video above, it should help you. I'm ready to give you my signals.").parseMode(HTML));
                                             increaseTimesWasSent(keyForUser);
-                                        } else if ( !currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 2   ){
-                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 I just want to remind you that registration doesn't take much time! Simply create a new account using this link: https://bit.ly/ChatGPTtrading. If you're unable to open it or if you have any other questions or suggestions, use the command /support.").parseMode(HTML));
+                                        } else if (!currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 2) {
+                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 I want to remind you that signing up doesn't require much time! Just make a new account using this link: https://bit.ly/ChatGPTtrading. (This is the final reminder, if you don't manage to create an account within the next 3 days, you won't get access to my signals)").parseMode(HTML));
                                             increaseTimesWasSent(keyForUser);
                                         }
                                     }
@@ -218,7 +217,7 @@ public class BotController {
                                 userBanned.setLastTimePressedDeposit(DateUtil.addMinutes(currentDate, 30));
                                 String updatedBannedUser = convertUserToJson(userBanned);
                                 jedis.set(TGId, updatedBannedUser);
-                                bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " was banned to write to support"));
+                                bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " was banned to press button 'Deposit done' for 30 minutes. "));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
                                 e.printStackTrace();
@@ -228,7 +227,7 @@ public class BotController {
                                 String TGId = (messageText.substring(14));
                                 depositDisapprove(Long.parseLong(TGId));
                                 System.out.println(TGId);
-                                bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " got deposit disapprove"));
+                                bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " got deleted"));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
                                 e.printStackTrace();
@@ -247,7 +246,7 @@ public class BotController {
                             try {
                                 String TGId = USER_DB_MAP_KEY + ":" + (messageText.substring(12));
                                 User newUser = convertJsonToUser(jedis.get(TGId));
-                                bot.execute(new SendMessage(AdminID, "Name of user is: " + newUser.getName() +" his TG id: " + TGId));
+                                bot.execute(new SendMessage(AdminID, "Name of user is: " + newUser.getName() + " his TG id: " + TGId));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
                                 e.printStackTrace();
@@ -269,6 +268,19 @@ public class BotController {
                         } else if (messageText.startsWith("setSecondDigit:")) {
                             secondDigit = Integer.parseInt(messageText.substring(15));
                             bot.execute(new SendMessage(AdminID, "First digit now is " + secondDigit + "."));
+                        } else if (messageText.startsWith("setCheckForUID:")) {
+                            try {
+                                long newCheck = Integer.parseInt(messageText.substring(15));
+                                User adminUser = convertJsonToUser(jedis.get(AdminID));
+                                adminUser.setUID(String.valueOf(newCheck));
+                                String updatedAdminUser = convertUserToJson(adminUser);
+                                jedis.set(AdminID, updatedAdminUser);
+                                bot.execute(new SendMessage(AdminID, "First numbers is: " + newCheck + "."));
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
+                                e.printStackTrace();
+                            }
+
                         } else if (messageText.startsWith("D") || messageText.startsWith("d") || messageText.startsWith("В") || messageText.startsWith("в")) {
                             String tgID = messageText.substring(1);
                             InlineKeyboardButton button12 = new InlineKeyboardButton("Register here");
@@ -314,7 +326,7 @@ public class BotController {
                             bot.execute(new SendMessage(AdminID, "✅ ID:<code>" + playerId + "</code> has a question" + userQuestion + " To answer it write a message: <code>reply:111111111&</code> *your text*").parseMode(HTML));
                             System.out.println("Really works");
                         } else {
-                            bot.execute(new SendMessage(playerId, "❌ Something went wrong. You may got banned. Try once again later. ").parseMode(HTML));
+                            bot.execute(new SendMessage(playerId, "❌ Something went wrong. The support is not available. Try once again later. ").parseMode(HTML));
                         }
                     } else if (messageText.equals("/support") || messageCallbackText.equals("Help")) {
                         bot.execute(new SendMessage(playerId, "⏳ If you have any questions, please review the video first. If you don't find an answer to your question there or if you have a different request, please send a message in the format:<code>needReply:</code> *your text*. \nPlease do this in one message, and I'll get back to you as soon as possible.").parseMode(HTML));
@@ -491,7 +503,8 @@ public class BotController {
                             try {
                                 User user = convertJsonToUser(jedis.get(userKey));
                                 String sendAdminUID = user.getUID();
-                                if (Integer.parseInt(sendAdminUID.substring(0, 1)) >= firstDigit && Integer.parseInt(sendAdminUID.substring(1, 2)) >= secondDigit) {
+                                User adminUser = convertJsonToUser(jedis.get(AdminID));
+                                if (Integer.parseInt(sendAdminUID.substring(0, 2)) >= Integer.parseInt(adminUser.getUID())) {
                                     bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> \uD83D\uDFE2 want to register. Write 'A11111111' (telegram id) to approve and 'D1111111' to disapprove").parseMode(HTML));
                                     bot.execute(new SendMessage(playerId, "⏳ Great, your UID will be verified soon"));
                                 } else {
