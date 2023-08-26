@@ -168,7 +168,7 @@ public class BotController {
                                 registrationApprove(Long.parseLong(tgID));
                                 bot.execute(new SendMessage(tgID, "✅ Great, your account is confirmed! The last step is to make any deposit at least 50$ by any convenient way. After that press the button 'Deposit done'.\n" +
                                         "\n" +
-                                        "I would like to note that the recommended starting deposit of $50 - $150. Also use promo code 50START to get an extra 50% of your deposit. For example, with a deposit of 100$ you will get 50$ additional. It means that you will get 150$ in total.\n" +
+                                        "I would like to note that the recommended starting deposit of $50 - $350. Also use promo code 50START to get an extra 50% of your deposit. For example, with a deposit of 100$ you will get 50$ additional. It means that you will get 150$ in total.\n" +
                                         "\n" +
                                         "At the bottom there is a video instruction on how to top up the account.").replyMarkup(inlineKeyboardMarkup));
                                 bot.execute(new SendVideo(tgID, videoDepositFile));
@@ -334,7 +334,64 @@ public class BotController {
                             bot.execute(new SendMessage(playerId, "❌ Something went wrong. The support is not available. Try once again later. ").parseMode(HTML));
                         }
                     } else if (messageText.equals("/support") || messageCallbackText.equals("Help")) {
-                        bot.execute(new SendMessage(playerId, "⏳ If you have any questions, please review the video first. If you don't find an answer to your question there or if you have a different request, please send a message in the format:<code>needReply:</code> *your text*. \nPlease do this in one message, and I'll get back to you as soon as possible.").parseMode(HTML));
+                        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+                        InlineKeyboardButton button52 = new InlineKeyboardButton("FAQ");
+                        InlineKeyboardButton button53 = new InlineKeyboardButton("Need reply!");
+                        button52.callbackData("FAQ");
+                        button53.callbackData("Answer");
+                        inlineKeyboardMarkup.addRow(button52, button53);
+                        bot.execute(new SendMessage(playerId, "⏳ You reached out to support. Please make sure to watch the video guides I sent you earlier before reaching out directly. You can review the most frequently asked questions by clicking on the 'FAQ' button, or you can message me directly by clicking on the 'Need reply!' button.").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
+                    } else if (messageCallbackText.equals("FAQ")) {
+                        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+                        InlineKeyboardButton button32 = new InlineKeyboardButton("Return back");
+                        button32.callbackData("Help");
+                        inlineKeyboardMarkup.addRow(button32);
+                        bot.execute(new SendMessage(playerId, "1. <b>How to Trade and Earn with the Bot</b>\n" +
+                                "\n" +
+                                "Thank you for your interest in the ChatGPT bot! To understand how the bot works, please watch our instructional video.\n" +
+                                "\n" +
+                                "2. <b>What's the Best Starting Amount?</b>\n" +
+                                "\n" +
+                                "Traders who begin with $50 to $350 often achieve the most success.\n" +
+                                "\n" +
+                                "3. <b>Can I Start with $50?</b>\n" +
+                                "\n" +
+                                "Yes, you can, but it's better to start with a larger amount.\n" +
+                                "\n" +
+                                "4. <b>How Reliable is the Bot?</b>\n" +
+                                "\n" +
+                                "The bot learns from mistakes and victories, so its reliability increases over time.\n" +
+                                "\n" +
+                                "5. <b>How Much Can I Earn with $100?</b>\n" +
+                                "\n" +
+                                "Earnings depend on your stake amount and how often you use the bot. I recommend using 25% of your deposit to achieve good profits. On average, users who follow my advice earn $800 to $3000 per week.\n" +
+                                "\n" +
+                                "6. <b>What are the Bot's Advantages?</b>\n" +
+                                "\n" +
+                                "The bot employs the latest AI version, providing the most accurate signals compared to other bots. You can use it whenever you want by entering the relevant command.\n" +
+                                "\n" +
+                                "7. <b>How to Find My ID</b>\n" +
+                                "\n" +
+                                "In the trading profile section, you'll find your UID.\n" +
+                                "\n" +
+                                "8. <b>Is Sharing My UID Safe?</b>\n" +
+                                "\n" +
+                                "Absolutely. Your User Identification or Account ID (UID) is a unique digital identifier on the platform. It doesn't contain personal information and can't be used to access your account. You can share your account ID with other traders so they can find you in chats, ratings, and social trading.\n" +
+                                "\n" +
+                                "9. <b>How Can I Get a Deposit Bonus? (Promo Code)</b>\n" +
+                                "\n" +
+                                "Promo codes: 50START (works from $50) and WELCOME50 (works from $100).\n" +
+                                "\n" +
+                                "10. <b>What's the Signal Accuracy?</b>\n" +
+                                "\n" +
+                                "I search for signals with an accuracy of over 70%.").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
+                    }  else if (messageCallbackText.equals("Answer")) {
+                        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+                        InlineKeyboardButton button32 = new InlineKeyboardButton("Return back");
+                        button32.callbackData("Help");
+                        inlineKeyboardMarkup.addRow(button32);
+                        bot.execute(new SendMessage(playerId, "f you don't find an answer to your question or if you have a different request, please send a message in the format:\n<code>needReply:</code> *your text*. \n" +
+                                "Please do this in one message, and I'll get back to you as soon as possible.").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                     } else if (messageText.equals("/start")) {
                         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                         InlineKeyboardButton button32 = new InlineKeyboardButton("Let's start");
