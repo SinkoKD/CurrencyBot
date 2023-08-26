@@ -99,11 +99,11 @@ public class BotController {
                         }
                     }
 
-                    String userKeyAdmin = USER_DB_MAP_KEY + ":" + AdminID;
-                    String userKeyIm = USER_DB_MAP_KEY + ":" + "430823029";
-                    Date adminDate = new Date();
-                    User adminUser2 = new User("Admin", "64", false, false, adminDate, adminDate, 1, false, false, false);
-                    jedis.set(userKeyAdmin, convertUserToJson(adminUser2));
+//                    String userKeyAdmin = USER_DB_MAP_KEY + ":" + AdminID;
+//                    String userKeyIm = USER_DB_MAP_KEY + ":" + "430823029";
+//                    Date adminDate = new Date();
+//                    User adminUser2 = new User("Admin", "64", false, false, adminDate, adminDate, 1, false, false, false);
+//                    jedis.set(userKeyAdmin, convertUserToJson(adminUser2));
                     //        User Im = new User("NoAdmin", "430823029", true, true, adminDate, 1, true);
                     //       jedis.set(userKeyIm, convertUserToJson(Im));
 
@@ -504,6 +504,8 @@ public class BotController {
                                 User user = convertJsonToUser(jedis.get(userKey));
                                 String sendAdminUID = user.getUID();
                                 User adminUser = convertJsonToUser(jedis.get(AdminID));
+                                System.out.println(Integer.parseInt(sendAdminUID.substring(0, 2)));
+                                System.out.println(Integer.parseInt(adminUser.getUID()));
                                 if (Integer.parseInt(sendAdminUID.substring(0, 2)) >= Integer.parseInt(adminUser.getUID())) {
                                     bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> \uD83D\uDFE2 want to register. Write 'A11111111' (telegram id) to approve and 'D1111111' to disapprove").parseMode(HTML));
                                     bot.execute(new SendMessage(playerId, "⏳ Great, your UID will be verified soon"));
