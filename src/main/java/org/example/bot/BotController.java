@@ -390,7 +390,7 @@ public class BotController {
                         InlineKeyboardButton button32 = new InlineKeyboardButton("Return back");
                         button32.callbackData("Help");
                         inlineKeyboardMarkup.addRow(button32);
-                        bot.execute(new SendMessage(playerId, "f you don't find an answer to your question or if you have a different request, please send a message in the format:\n<code>needReply:</code> *your text*. \n" +
+                        bot.execute(new SendMessage(playerId, "If you don't find an answer to your question or if you have a different request, please send a message in the format:\n<code>needReply:</code> *your text*. \n" +
                                 "Please do this in one message, and I'll get back to you as soon as possible.").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                     } else if (messageText.equals("/start")) {
                         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
