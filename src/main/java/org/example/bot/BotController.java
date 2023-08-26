@@ -58,8 +58,6 @@ public class BotController {
                     String messageText = "";
                     String messageCallbackText = "";
                     String uid;
-                    int firstDigit = 6;
-                    int secondDigit = 5;
                     int messageId;
                     Path resourcePath = Paths.get("src/main/resources");
                     File videoDepositFile = resourcePath.resolve("depositTutorial.mp4").toFile();
@@ -99,16 +97,16 @@ public class BotController {
                         }
                     }
 
+
+
 //                    String userKeyAdmin = USER_DB_MAP_KEY + ":" + AdminID;
 //                    String userKeyIm = USER_DB_MAP_KEY + ":" + "430823029";
 //                    Date adminDate = new Date();
 //                    User adminUser2 = new User("Admin", "64", false, false, adminDate, adminDate, 1, false, false, false);
 //                    jedis.set(userKeyAdmin, convertUserToJson(adminUser2));
-                    //        User Im = new User("NoAdmin", "430823029", true, true, adminDate, 1, true);
+                    //        User I'm = new User("NoAdmin", "430823029", true, true, adminDate, 1, true);
                     //       jedis.set(userKeyIm, convertUserToJson(Im));
 
-                    String test = "userDBMap:1544691874".substring(10);
-                    System.out.println(test);
 
                     try {
                         String userKey = USER_DB_MAP_KEY + ":" + AdminID;
@@ -262,12 +260,6 @@ public class BotController {
                         } else if (messageText.equals("/getAllUsers")) {
                             int size = 141 + allUsers.size();
                             bot.execute(new SendMessage(AdminID, "There is " + size + " users right now."));
-                        } else if (messageText.startsWith("setFirstDigit:")) {
-                            firstDigit = Integer.parseInt(messageText.substring(14));
-                            bot.execute(new SendMessage(AdminID, "First digit now is " + firstDigit + "."));
-                        } else if (messageText.startsWith("setSecondDigit:")) {
-                            secondDigit = Integer.parseInt(messageText.substring(15));
-                            bot.execute(new SendMessage(AdminID, "First digit now is " + secondDigit + "."));
                         } else if (messageText.startsWith("setCheckForUID:")) {
                             try {
                                 long newCheck = Integer.parseInt(messageText.substring(15));
@@ -280,7 +272,20 @@ public class BotController {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
                                 e.printStackTrace();
                             }
-
+                        } else if (messageText.startsWith("createNewPost:")) {
+                            try {
+                                String postText = messageText.substring(14);
+                                Set<String> userKeys = jedis.keys("userDBMap:*");
+                                System.out.println("Amount of users: " + userKeys.size());
+                                for (String keyForUser : userKeys) {
+                                    String userTgID = keyForUser.substring(10);
+                                    bot.execute(new SendMessage(userTgID, postText));
+                                }
+                                bot.execute(new SendMessage(AdminID, "The message " + postText + " has been sent."));
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
+                                e.printStackTrace();
+                            }
                         } else if (messageText.startsWith("D") || messageText.startsWith("d") || messageText.startsWith("В") || messageText.startsWith("в")) {
                             String tgID = messageText.substring(1);
                             InlineKeyboardButton button12 = new InlineKeyboardButton("Register here");
