@@ -97,17 +97,6 @@ public class BotController {
                         }
                     }
 
-
-
-//                    String userKeyAdmin = USER_DB_MAP_KEY + ":" + AdminID;
-//                    String userKeyIm = USER_DB_MAP_KEY + ":" + "430823029";
-//                    Date adminDate = new Date();
-//                    User adminUser2 = new User("Admin", "64", false, false, adminDate, adminDate, 1, false, false, false);
-//                    jedis.set(userKeyAdmin, convertUserToJson(adminUser2));
-                    //        User I'm = new User("NoAdmin", "430823029", true, true, adminDate, 1, true);
-                    //       jedis.set(userKeyIm, convertUserToJson(Im));
-
-
                     try {
                         String userKey = USER_DB_MAP_KEY + ":" + AdminID;
                         User checkedAdmin = convertJsonToUser(jedis.get(userKey));
