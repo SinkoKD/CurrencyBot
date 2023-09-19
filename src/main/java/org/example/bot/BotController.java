@@ -296,8 +296,11 @@ public class BotController {
                                 bot.execute(new SendMessage(AdminID, "Deposit for " + tgID + " was approved"));
                                 bot.execute(new SendMessage(tgID, "✅ Great! Everything is ready! You can start getting signals. For this click on 'Get Signal' or write it manually. \n" +
                                         "\n" +
-                                        "Below is a video guide on how to use signals from me. \n" +
-                                        "\n" +
+                                        "<b>❗️IMPORTANT ❗️</b> \n\n" +
+                                        "<i>1⃣ I am analyzing only the real market, so I won't work on a demo properly. To achieve better accuracy, trade on a real account.\n\n" +
+                                        "2⃣ I analyze all successful and failed signals. The more signals you get, the better they become.\n\n" +
+                                        "3⃣ The recommended amount to use for trading is 15-20% per trade.</i>\n\n" +
+                                        "Below is a video guide on how to use signals from me. \n" + "\n" +
                                         "If you have any questions use the /support command.").replyMarkup(replyKeyboardMarkup));
                                 setTo1TimesWasSent(tgID);
                             } catch (Exception e) {
@@ -374,7 +377,7 @@ public class BotController {
                                 "10. <b>What's the Signal Accuracy?</b>\n" +
                                 "\n" +
                                 "I search for signals with an accuracy of over 70%.").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
-                    }  else if (messageCallbackText.equals("Answer")) {
+                    } else if (messageCallbackText.equals("Answer")) {
                         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                         InlineKeyboardButton button32 = new InlineKeyboardButton("Return back");
                         button32.callbackData("Help");
@@ -400,7 +403,7 @@ public class BotController {
                         bot.execute(new SendMessage(playerId, "☝️ Here is a video example of how I work.").parseMode(HTML));
 
                     } else if (userDeposited(playerId) || userDeposited(playerId)) {
-                        if (messageText.equals("Get Signal") || messageCallbackText.equals("getSignal") || messageText.equals("Get signal") || messageText.equals("get signal") ) {
+                        if (messageText.equals("Get Signal") || messageCallbackText.equals("getSignal") || messageText.equals("Get signal") || messageText.equals("get signal")) {
                             List<String> listOfPairs = Arrays.asList(
                                     "AUD/CAD OTC", "AUD/CHF OTC", "AUD/NZD OTC", "CAD/CHF OTC", "EUR/CHF OTC",
                                     "EUR/JPY OTC", "EUR/USD OTC", "GBP/JPY OTC", "NZD/JPY OTC", "NZD/USD OTC",
