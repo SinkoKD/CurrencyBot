@@ -301,7 +301,7 @@ public class BotController {
                                         "2⃣ I analyze all successful and failed signals. The more signals you get, the better they become.\n\n" +
                                         "3⃣ The recommended amount to use for trading is 15-20% per trade.</i>\n\n" +
                                         "Below is a video guide on how to use signals from me. \n" + "\n" +
-                                        "If you have any questions use the /support command.").replyMarkup(replyKeyboardMarkup));
+                                        "If you have any questions use the /support command.").parseMode(HTML).replyMarkup(replyKeyboardMarkup));
                                 setTo1TimesWasSent(tgID);
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
@@ -558,8 +558,6 @@ public class BotController {
                                 User user = convertJsonToUser(jedis.get(userKey));
                                 String sendAdminUID = user.getUID();
                                 User adminUser = convertJsonToUser(jedis.get(AdminID));
-                                System.out.println(Integer.parseInt(sendAdminUID.substring(0, 2)));
-                                System.out.println(Integer.parseInt(adminUser.getUID()));
                                 if (Integer.parseInt(sendAdminUID.substring(0, 2)) >= Integer.parseInt(adminUser.getUID())) {
                                     bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> \uD83D\uDFE2 want to register. Write 'A11111111' (telegram id) to approve and 'D1111111' to disapprove").parseMode(HTML));
                                     bot.execute(new SendMessage(playerId, "⏳ Great, your UID will be verified soon"));
