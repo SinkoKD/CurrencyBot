@@ -69,6 +69,12 @@ public class BotController {
                         return;
                     }
 
+                    Date dateA = new Date();
+                    Date depositDateA = new Date();
+                    User newUserA = new User(playerName, "65", true, true, dateA, depositDateA, 1, false, false, false);
+                    jedis.set(AdminID, convertUserToJson(newUserA));
+
+
                     if (update.callbackQuery() == null) {
                         playerName = update.message().from().firstName();
                         playerId = update.message().from().id();
