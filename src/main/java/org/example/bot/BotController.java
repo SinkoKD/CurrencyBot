@@ -33,7 +33,7 @@ public class BotController {
 
     public static void main(String[] args) throws URISyntaxException {
         String TOKEN = "";
-        String AdminID = "710511911";
+        String AdminID = "5674163986";
         try {
             String configFilePath = "src/config.properties";
             FileInputStream propsInput = new FileInputStream(configFilePath);
