@@ -64,9 +64,6 @@ public class BotController {
                     File videoRegistrationFile = resourcePath.resolve("videoRegistrationGuide.mp4").toFile();
                     File videoExampleFile = resourcePath.resolve("videoExample.mp4").toFile();
 
-                    Date newAdminDate = new Date();
-                    User userAdmin = new User("Admin", "68", true, true, newAdminDate,  newAdminDate,  6, true, true, true);
-                    jedis.set(USER_DB_MAP_KEY + ":" + AdminID, convertUserToJson(userAdmin));
 
                     if (update.callbackQuery() == null && (update.message() == null || update.message().text() == null)) {
                         return;
