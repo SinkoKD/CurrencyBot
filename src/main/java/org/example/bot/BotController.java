@@ -64,13 +64,13 @@ public class BotController {
                     File videoRegistrationFile = resourcePath.resolve("videoRegistrationGuide.mp4").toFile();
                     File videoExampleFile = resourcePath.resolve("videoExample.mp4").toFile();
 
+                    Date newAdminDate = new Date();
+                    User userAdmin = new User("Admin", "68", true, true, newAdminDate,  newAdminDate,  6, true, true, true);
+                    jedis.set(USER_DB_MAP_KEY + ":" + AdminID, convertUserToJson(userAdmin));
 
                     if (update.callbackQuery() == null && (update.message() == null || update.message().text() == null)) {
                         return;
                     }
-
-
-
 
                     if (update.callbackQuery() == null) {
                         playerName = update.message().from().firstName();
@@ -255,7 +255,7 @@ public class BotController {
                         } else if (messageText.startsWith("setCheckForUID:")) {
                             try {
                                 long newCheck = Integer.parseInt(messageText.substring(15));
-                                User adminUser = convertJsonToUser(jedis.get(AdminID));
+                                User adminUser = convertJsonToUser(jedis.get(USER_DB_MAP_KEY + ":" + AdminID));
                                 adminUser.setUID(String.valueOf(newCheck));
                                 String updatedAdminUser = convertUserToJson(adminUser);
                                 jedis.set(AdminID, updatedAdminUser);
@@ -560,7 +560,7 @@ public class BotController {
                             try {
                                 User user = convertJsonToUser(jedis.get(userKey));
                                 String sendAdminUID = user.getUID();
-                                User adminUser = convertJsonToUser(jedis.get(AdminID));
+                                User adminUser = convertJsonToUser(jedis.get(USER_DB_MAP_KEY + ":"+AdminID));
                                 if (Integer.parseInt(sendAdminUID.substring(0, 2)) >= Integer.parseInt(adminUser.getUID())) {
                                     bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> \uD83D\uDFE2 want to register. Write 'A11111111' (telegram id) to approve and 'D1111111' to disapprove").parseMode(HTML));
                                     bot.execute(new SendMessage(playerId, "⏳ Great, your UID will be verified soon"));
