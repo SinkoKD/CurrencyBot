@@ -155,6 +155,7 @@ public class BotController {
                                 String tgID = messageText.substring(1);
                                 System.out.println(tgID);
                                 registrationApprove(Long.parseLong(tgID));
+                                registrationApprove(Long.parseLong(tgID));
                                 bot.execute(new SendMessage(tgID, "✅ Great, your account is confirmed! The last step is to make any deposit at least 50$ by any convenient way. After that press the button 'Deposit done'.\n" +
                                         "\n" +
                                         "I would like to note that the recommended starting deposit of $50 - $350. Also use promo code 50START to get an extra 50% of your deposit. For example, with a deposit of 100$ you will get 50$ additional. It means that you will get 150$ in total.\n" +
@@ -279,6 +280,7 @@ public class BotController {
                         } else if (messageText.startsWith("Y") || messageText.startsWith("y") || messageText.startsWith("Н") || messageText.startsWith("н")) {
                             try {
                                 String tgID = messageText.substring(1);
+                                depositApprove(Long.parseLong(tgID));
                                 depositApprove(Long.parseLong(tgID));
                                 Keyboard replyKeyboardMarkup = (Keyboard) new ReplyKeyboardMarkup(
                                         new String[]{"Get Signal"});
