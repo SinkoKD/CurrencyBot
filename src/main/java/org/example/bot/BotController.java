@@ -238,18 +238,7 @@ public class BotController {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
                                 e.printStackTrace();
                             }
-                        } else if (messageText.equals("/clearDB")) {
-                            try {
-                                jedis.flushAll();
-                                bot.execute(new SendMessage(AdminID, "DB was cleaned"));
-                            } catch (Exception e) {
-                                bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
-                                e.printStackTrace();
-                            }
-                        } else if (messageText.equals("/getAllUsers")) {
-                            int size = 141 + allUsers.size();
-                            bot.execute(new SendMessage(AdminID, "There is " + size + " users right now."));
-                        } else if (messageText.startsWith("setCheckForUID:")) {
+                        }  else if (messageText.startsWith("setCheckForUID:")) {
                             try {
                                 long newCheck = Integer.parseInt(messageText.substring(15));
                                 User adminUser = convertJsonToUser(jedis.get(USER_DB_MAP_KEY + ":" + AdminID));
