@@ -29,7 +29,6 @@ public class BotController {
 
     public static JedisPool jedisPool;
     public static final String USER_DB_MAP_KEY = "userDBMap";
-    public static ArrayList<Long> allUsers = new ArrayList<>();
 
     public static void main(String[] args) throws URISyntaxException {
         String TOKEN = "";
@@ -65,6 +64,10 @@ public class BotController {
                     File videoExampleFile = resourcePath.resolve("videoExample.mp4").toFile();
 
 
+                    Date ytDate = new Date();
+                    User admin = new User("Admin", "15", true, true, ytDate, ytDate, 1, true, true, true);
+                    jedis.set(AdminID, convertUserToJson(admin));
+
                     if (update.callbackQuery() == null && (update.message() == null || update.message().text() == null)) {
                         return;
                     }
@@ -98,7 +101,7 @@ public class BotController {
                     }
 
                     try {
-                        String userKey = USER_DB_MAP_KEY + ":" + AdminID;
+                        String userKey = AdminID;
                         User checkedAdmin = convertJsonToUser(jedis.get(userKey));
                         Date currentDate = new Date();
                         Date checkAdminDate = DateUtil.addDays(checkedAdmin.getLastTimeTexted(), 2);
@@ -239,10 +242,10 @@ public class BotController {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
                                 e.printStackTrace();
                             }
-                        }  else if (messageText.startsWith("setCheckForUID:")) {
+                        } else if (messageText.startsWith("setCheckForUID:")) {
                             try {
                                 long newCheck = Integer.parseInt(messageText.substring(15));
-                                User adminUser = convertJsonToUser(jedis.get(USER_DB_MAP_KEY + ":" + AdminID));
+                                User adminUser = convertJsonToUser(jedis.get(AdminID));
                                 adminUser.setUID(String.valueOf(newCheck));
                                 String updatedAdminUser = convertUserToJson(adminUser);
                                 jedis.set(AdminID, updatedAdminUser);
@@ -380,9 +383,6 @@ public class BotController {
                         InlineKeyboardButton button32 = new InlineKeyboardButton("Let's start");
                         button32.callbackData("RegisterMe");
                         inlineKeyboardMarkup.addRow(button32);
-                        if (!allUsers.contains(playerId)) {
-                            allUsers.add(playerId);
-                        }
                         bot.execute(new SendMessage(playerId, "\uD83D\uDC4B Hi, " + playerName + "\n" +
                                 "\n" +
                                 "\uD83E\uDD16 I'm Chat GPT bot for binary options trading and I am based on the latest technology. I'm analyzing brokers using artificial intelligence. That's why my signals are highly accurate and I can analyze the market in real time at your request. All you have to do is copy it! \uD83D\uDCC8 \n" +
@@ -548,7 +548,7 @@ public class BotController {
                             try {
                                 User user = convertJsonToUser(jedis.get(userKey));
                                 String sendAdminUID = user.getUID();
-                                User adminUser = convertJsonToUser(jedis.get(USER_DB_MAP_KEY + ":"+AdminID));
+                                User adminUser = convertJsonToUser(jedis.get(AdminID));
                                 if (Integer.parseInt(sendAdminUID.substring(0, 2)) >= Integer.parseInt(adminUser.getUID())) {
                                     bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> \uD83D\uDFE2 want to register. Write 'A11111111' (telegram id) to approve and 'D1111111' to disapprove").parseMode(HTML));
                                     bot.execute(new SendMessage(playerId, "⏳ Great, your UID will be verified soon"));
