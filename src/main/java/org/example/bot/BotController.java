@@ -64,9 +64,9 @@ public class BotController {
                     File videoExampleFile = resourcePath.resolve("videoExample.mp4").toFile();
 
 
-                    Date ytDate = new Date();
-                    User admin = new User("Admin", "15", true, true, ytDate, ytDate, 1, true, true, true);
-                    jedis.set(AdminID, convertUserToJson(admin));
+//                    Date ytDate = new Date();
+//                    User admin = new User("Admin", "15", true, true, ytDate, ytDate, 1, true, true, true);
+//                    jedis.set(AdminID, convertUserToJson(admin));
 
                     if (update.callbackQuery() == null && (update.message() == null || update.message().text() == null)) {
                         return;
