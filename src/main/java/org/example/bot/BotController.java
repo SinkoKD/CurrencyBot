@@ -20,6 +20,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.pengrad.telegrambot.model.request.ParseMode.HTML;
 import static org.example.bot.JedisActions.*;
@@ -472,7 +474,6 @@ public class BotController {
                                     }
                                 }
 
-
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(playerId, "❌ An error occurred. Please try again. "));
                                 e.printStackTrace();
@@ -503,46 +504,6 @@ public class BotController {
                             bot.execute(new SendMessage(playerId, "☝️ Here is a video guide on how to register.").parseMode(HTML));
                         } else if (messageCallbackText.equals("ImRegistered")) {
                             bot.execute(new SendMessage(playerId, "✅ Good job! Now send me your Pocket Option ID in format 'ID12345678'.").parseMode(HTML));
-                        } else if (messageText.startsWith("ID") || messageText.startsWith("id") || messageText.startsWith("Id") || messageText.startsWith("iD") && messageText.length() == 10 || messageText.length() == 11) {
-                            try {
-                                InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-                                InlineKeyboardButton button5 = new InlineKeyboardButton("Yes");
-                                InlineKeyboardButton button6 = new InlineKeyboardButton("No");
-                                button5.callbackData("YesIM");
-                                button6.callbackData("ImRegistered");
-                                inlineKeyboardMarkup.addRow(button5, button6);
-                                String text = messageText.replaceAll("\\s", "");
-                                uid = text.substring(2, 10);
-                                Date date = new Date();
-                                Date depositDate = DateUtil.addDays(date, -1);
-                                User newUser = new User(playerName, uid, false, false, date, depositDate, 1, false, false, false);
-                                bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Your ID is " + uid + " is it correct?").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
-                                String userKey = USER_DB_MAP_KEY + ":" + playerId;
-                                jedis.set(userKey, convertUserToJson(newUser));
-                            } catch (Exception e) {
-                                bot.execute(new SendMessage(playerId, "❌ An error occurred. Please send your UID again. "));
-                                e.printStackTrace();
-                            }
-                        } else if (messageText.startsWith("user") || messageText.startsWith("USER") && messageText.length() == 12 || messageText.length() == 13) {
-                            try {
-                                InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-                                InlineKeyboardButton button5 = new InlineKeyboardButton("Yes");
-                                InlineKeyboardButton button6 = new InlineKeyboardButton("No");
-                                button5.callbackData("YesIM");
-                                button6.callbackData("ImRegistered");
-                                inlineKeyboardMarkup.addRow(button5, button6);
-                                String text = messageText.replaceAll("\\s", "");
-                                uid = text.substring(4, 12);
-                                Date date = new Date();
-                                Date depositDate = DateUtil.addDays(date, -1);
-                                User newUser = new User(playerName, uid, false, false, date, depositDate, 1, false, false, false);
-                                bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Your ID is " + uid + " is it correct?").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
-                                String userKey = USER_DB_MAP_KEY + ":" + playerId;
-                                jedis.set(userKey, convertUserToJson(newUser));
-                            } catch (Exception e) {
-                                bot.execute(new SendMessage(playerId, "❌ An error occurred. Please send your UID again. "));
-                                e.printStackTrace();
-                            }
                         } else if (messageCallbackText.equals("YesIM")) {
                             String userKey = USER_DB_MAP_KEY + ":" + playerId;
                             try {
@@ -569,6 +530,31 @@ public class BotController {
                             }
                         } else if (messageText.startsWith("/") || messageText.equals("Get Signal")) {
                             bot.execute(new SendMessage(playerId, "Before trying any signals you need to register"));
+                        } else {
+                            try {
+                                Pattern pattern = Pattern.compile("\\d{8}");
+                                Matcher matcher = pattern.matcher(messageText);
+                                if (matcher.find()) {
+                                    uid = matcher.group();
+                                    InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+                                    InlineKeyboardButton button5 = new InlineKeyboardButton("Yes");
+                                    InlineKeyboardButton button6 = new InlineKeyboardButton("No");
+                                    button5.callbackData("YesIM");
+                                    button6.callbackData("ImRegistered");
+                                    inlineKeyboardMarkup.addRow(button5, button6);
+                                    Date date = new Date();
+                                    Date depositDate = DateUtil.addDays(date, -1);
+                                    User newUser = new User(playerName, uid, false, false, date, depositDate, 1, false, false, false);
+                                    bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Is your ID " + uid + " correct? ✅\uD83C\uDD94").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
+                                    String userKey = USER_DB_MAP_KEY + ":" + playerId;
+                                    jedis.set(userKey, convertUserToJson(newUser));
+                                } else {
+                                    bot.execute(new SendMessage(playerId, "❌ There was an issue. Please try again.  "));
+                                }
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(playerId, "❌ There was an issue. Please send your ID again. Follow the instructions to receive signals. "));
+                                e.printStackTrace();
+                            }
                         }
                     }
                 });
