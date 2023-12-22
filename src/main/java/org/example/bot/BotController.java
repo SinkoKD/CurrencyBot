@@ -500,16 +500,19 @@ public class BotController {
                             new Thread(signalGeneratorTask).start();
                         } else if (messageText.equals("/upgrade")) {
                             InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-                            String str = "<html><strike>200$</strike></html>";
 
-                            String str2 = "<html><strike>160$</strike></html>";
+                            String str = "200$";
+                            String underlinedStr = "\uD83D\uDD39" + str.replaceAll(".", "\uD83D\uDD39") + "\uD83D\uDD39";
 
-                            InlineKeyboardButton button22 = new InlineKeyboardButton("Version 4.5 - 70$");
-                            button22.callbackData("pl");
-                            InlineKeyboardButton button23 = new InlineKeyboardButton("Version 4 - 50$");
-                            button23.callbackData("gl");
-                            inlineKeyboardMarkup.addRow(button23);
-                            inlineKeyboardMarkup.addRow(button22);
+                            String str2 = "160$";
+                            String underlinedStr2 = "\uD83D\uDD39" + str2.replaceAll(".", "\uD83D\uDD39") + "\uD83D\uDD39";
+
+                            InlineKeyboardButton button8 = new InlineKeyboardButton("Version 4 " + underlinedStr2 + " 50$");
+                            InlineKeyboardButton button9 = new InlineKeyboardButton("Version 4.5 " + underlinedStr + " 70$");
+                            button8.callbackData("gl");
+                            button9.callbackData("pl");
+                            inlineKeyboardMarkup.addRow(button9);
+                            inlineKeyboardMarkup.addRow(button8);
                             bot.execute(new SendMessage(playerId, "\uD83D\uDE80 Exciting News! \uD83C\uDF1F Two new versions are currently ready " +
                                     "to increase signal accuracy up to 99%. \uD83D\uDCC8 Celebrate the holidays with special discounts:\n" +
                                     "\n" +
