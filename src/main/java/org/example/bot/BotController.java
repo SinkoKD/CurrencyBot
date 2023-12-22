@@ -229,8 +229,8 @@ public class BotController {
                                 userUpdated.setMinimumPercent(70);
                                 String updatedUser = convertUserToJson(userUpdated);
                                 jedis.set(TGId, updatedUser);
-                                bot.execute(new SendMessage(AdminID, "User with ID " + messageText.substring(8) + " now has V 4!"));
-                                bot.execute(new SendMessage(messageText.substring(8), "✅Congratulations! Now I've upgraded and am using version 4!"));
+                                bot.execute(new SendMessage(AdminID, "User with ID " + messageText.substring(7) + " now has V 4!"));
+                                bot.execute(new SendMessage(messageText.substring(7), "✅ Congratulations! Now I've upgraded and am using version 4!"));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ There was an issue. Please try again. "));
                                 e.printStackTrace();
@@ -243,7 +243,7 @@ public class BotController {
                                 String updatedUser = convertUserToJson(userUpdated);
                                 jedis.set(TGId, updatedUser);
                                 bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " now has V 4.5!"));
-                                bot.execute(new SendMessage(messageText.substring(8), "✅Congratulations! Now I've upgraded and am using version 4.5!"));
+                                bot.execute(new SendMessage(messageText.substring(9), "✅ Congratulations! Now I've upgraded and am using version 4.5!"));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ There was an issue. Please try again. "));
                                 e.printStackTrace();
