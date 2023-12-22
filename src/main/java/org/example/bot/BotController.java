@@ -501,14 +501,8 @@ public class BotController {
                         } else if (messageText.equals("/upgrade")) {
                             InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
-                            String str = "200$";
-                            String underlinedStr = "\uD83D\uDD39" + str.replaceAll(".", "\uD83D\uDD39") + "\uD83D\uDD39";
-
-                            String str2 = "160$";
-                            String underlinedStr2 = "\uD83D\uDD39" + str2.replaceAll(".", "\uD83D\uDD39") + "\uD83D\uDD39";
-
-                            InlineKeyboardButton button8 = new InlineKeyboardButton("Version 4 " + underlinedStr2 + " 50$");
-                            InlineKeyboardButton button9 = new InlineKeyboardButton("Version 4.5 " + underlinedStr + " 70$");
+                            InlineKeyboardButton button8 = new InlineKeyboardButton("Version 4 - 50$");
+                            InlineKeyboardButton button9 = new InlineKeyboardButton("Version 4.5 - 70$");
                             button8.callbackData("gl");
                             button9.callbackData("pl");
                             inlineKeyboardMarkup.addRow(button9);
@@ -521,6 +515,7 @@ public class BotController {
                                     "Hurry up! The opportunity to upgrade the bot is limited. ⏳").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
                         } else if (messageCallbackText.equals("gl")) {
                             try {
+                                System.out.println("here");
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 User currentUser = convertJsonToUser(jedis.get(userKey));
                                 if (currentUser.getMinimumPercent() == 90) {
@@ -586,6 +581,8 @@ public class BotController {
                                 bot.execute(new SendMessage(playerId, "❌ There was an issue. Please try again. "));
                                 e.printStackTrace();
                             }
+                        } else  {
+                            System.out.println("HHHHEEEEERREEEEE");
                         }
                     } else if (userRegistered(playerId)) {
                         if (messageCallbackText.equals("IDeposit")) {
