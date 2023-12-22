@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.pengrad.telegrambot.model.request.ParseMode.HTML;
 import static org.example.bot.JedisActions.*;
@@ -159,6 +160,11 @@ public class BotController {
                                 System.out.println(messageText.length());
                                 String tgID = messageText.substring(1);
                                 System.out.println(tgID);
+                                String TGId = USER_DB_MAP_KEY + ":" + tgID;
+                                User userBanned = convertJsonToUser(jedis.get(TGId));
+                                userBanned.setCanWriteToSupport(true);
+                                String updatedBannedUser = convertUserToJson(userBanned);
+                                jedis.set(TGId, updatedBannedUser);
                                 registrationApprove(Long.parseLong(tgID));
                                 registrationApprove(Long.parseLong(tgID));
                                 bot.execute(new SendMessage(tgID, "✅ Great, your account is confirmed! The last step is to make any deposit at least 50$ by any convenient way. After that press the button 'Deposit done'.\n" +
@@ -213,6 +219,32 @@ public class BotController {
                                 bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " was banned to press button 'Deposit done' for 30 minutes. "));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
+                                e.printStackTrace();
+                            }
+                        } else if (messageText.startsWith("giveV4:")) {
+                            try {
+                                String TGId = USER_DB_MAP_KEY + ":" + (messageText.substring(7));
+                                User userUpdated = convertJsonToUser(jedis.get(TGId));
+                                userUpdated.setMinimumPercent(70);
+                                String updatedUser = convertUserToJson(userUpdated);
+                                jedis.set(TGId, updatedUser);
+                                bot.execute(new SendMessage(AdminID, "User with ID " + messageText.substring(8) + " now has V 4!"));
+                                bot.execute(new SendMessage(messageText.substring(8), "✅Congratulations! Now I've upgraded and am using version 4!"));
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(AdminID, "❌ There was an issue. Please try again. "));
+                                e.printStackTrace();
+                            }
+                        } else if (messageText.startsWith("giveV4.5:")) {
+                            try {
+                                String TGId = USER_DB_MAP_KEY + ":" + (messageText.substring(9));
+                                User userUpdated = convertJsonToUser(jedis.get(TGId));
+                                userUpdated.setMinimumPercent(90);
+                                String updatedUser = convertUserToJson(userUpdated);
+                                jedis.set(TGId, updatedUser);
+                                bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " now has V 4.5!"));
+                                bot.execute(new SendMessage(messageText.substring(8), "✅Congratulations! Now I've upgraded and am using version 4.5!"));
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(AdminID, "❌ There was an issue. Please try again. "));
                                 e.printStackTrace();
                             }
                         } else if (messageText.startsWith("deleteDeposit:")) {
@@ -405,6 +437,17 @@ public class BotController {
                                     "USD/CHF OTC"
                             );
                             Runnable signalGeneratorTask = () -> {
+                                String userKey = USER_DB_MAP_KEY + ":" + playerId;
+                                User currentUser = convertJsonToUser(jedis.get(userKey));
+                                int minPercent = 0;
+                                try {
+                                    minPercent = currentUser.getMinimumPercent();
+                                } catch (Exception e) {
+                                    currentUser.setMinimumPercent(0);
+                                    jedis.set(userKey, convertUserToJson(currentUser));
+                                    bot.execute(new SendMessage(AdminID, "❌ There was an issue. Please try again. "));
+                                    e.printStackTrace();
+                                }
                                 bot.execute(new SendMessage(playerId, "⌛️ Looking for the best pair...").parseMode(HTML));
                                 try {
                                     Thread.sleep(5000);
@@ -422,6 +465,11 @@ public class BotController {
                                     direction = "⬇️ Direction: <b>DOWN</b> ";
                                 }
                                 int randomAccuracy = random.nextInt(28) + 70;
+                                if (minPercent == 70) {
+                                    randomAccuracy = random.nextInt(20) + 80;
+                                } else if (minPercent == 90) {
+                                    randomAccuracy = random.nextInt(8) + 92;
+                                }
                                 int randomAddTime = random.nextInt(10000) + 8000;
                                 int randomTime = random.nextInt(5) + 1;
                                 String pickedPair = listOfPairs.get(randomNumber);
@@ -449,6 +497,97 @@ public class BotController {
                                 bot.execute(new SendMessage(playerId, "<b>GO!</b>").parseMode(HTML).replyMarkup(replyKeyboardMarkup));
                             };
                             new Thread(signalGeneratorTask).start();
+                        } else if (messageText.equals("/upgrade")) {
+                            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+                            String str = "200$";
+                            String crossedOutStr = str.chars()
+                                    .mapToObj(c -> c + "\u0336")
+                                    .collect(Collectors.joining());
+
+                            String str2 = "160$";
+                            String crossedOutStr2 = str2.chars()
+                                    .mapToObj(c -> c + "\u0336")
+                                    .collect(Collectors.joining());
+
+                            InlineKeyboardButton button22 = new InlineKeyboardButton("Version 4.5 " + crossedOutStr + " 70$");
+                            button22.callbackData("Platinum");
+                            InlineKeyboardButton button23 = new InlineKeyboardButton("Version 4 " +crossedOutStr2 + " 50$");
+                            button23.callbackData("Gold");
+                            inlineKeyboardMarkup.addRow(button23);
+                            inlineKeyboardMarkup.addRow(button22);
+                            bot.execute(new SendMessage(playerId, "\uD83D\uDE80 Exciting News! \uD83C\uDF1F Two new versions are currently ready " +
+                                    "to increase signal accuracy up to 99%. \uD83D\uDCC8 Celebrate the holidays with special discounts:\n" +
+                                    "\n" +
+                                    "ChatGPT Version 4 - <s>160</s> \uD83C\uDF1F 50$ with accuracy (80+%)\n" +
+                                    "ChatGPT Version 4.5 - <s>200</s> \uD83C\uDF1F 70$ with accuracy (92+%)\n" +
+                                    "Hurry up! The opportunity to upgrade the bot won't last forever. ⏳").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
+                        } else if (messageCallbackText.equals("Gold")) {
+                            try {
+                                String userKey = USER_DB_MAP_KEY + ":" + playerId;
+                                User currentUser = convertJsonToUser(jedis.get(userKey));
+                                if (currentUser.getMinimumPercent() == 90) {
+                                    bot.execute(new SendMessage(playerId, "<b>\uD83D\uDFE2 You shouldn't pick lower plan.</b>").parseMode(HTML));
+                                } else {
+                                    InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+                                    InlineKeyboardButton button22 = new InlineKeyboardButton("Next!");
+                                    button22.callbackData("Next");
+                                    inlineKeyboardMarkup.addRow(button22);
+                                    bot.execute(new SendMessage(playerId, "\uD83C\uDF89 Awesome choice! You've selected Version 4. " +
+                                            "Now, please use the details below to make a $50 payment " +
+                                            "for the bot upgrade using your preferred method. \uD83D\uDCB3\uD83D\uDCB5\n" +
+                                            "Payment Details:\n" +
+                                            "USDT TRC20 <code>TJjc2x1FTq3mW8FXLDCHSinrN724oNixuA</code>\n" +
+                                            "BTC <code>1NPFFUcBA42rHe6L2H2dNBPwWAjPYBrUsU</code>\n" +
+                                            "ETH ERC20 <code>0x1481fe81465c12135e739f4851220fa590397e74<code>\n" +
+                                            "<i>Important! Please consider any transaction fees," +
+                                            " if the amount received is less than the required sum, the version won't be updated! </i>\n\n \uD83D\uDE0A\uD83D\uDCB3\uD83D\uDE80 " +
+                                            "After making the payment, click the \"Next!\" button.</b>").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
+                                }
+                            } catch (Exception e) {
+                                String userKey = USER_DB_MAP_KEY + ":" + playerId;
+                                User currentUser = convertJsonToUser(jedis.get(userKey));
+                                currentUser.setMinimumPercent(0);
+                                jedis.set(userKey, convertUserToJson(currentUser));
+                                bot.execute(new SendMessage(playerId, "❌ There was an issue. Please try again. "));
+                                e.printStackTrace();
+                            }
+                        } else if (messageCallbackText.equals("Platinum")) {
+                            try {
+                                InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+                                InlineKeyboardButton button22 = new InlineKeyboardButton("Next!");
+                                button22.callbackData("Next");
+                                inlineKeyboardMarkup.addRow(button22);
+                                bot.execute(new SendMessage(playerId, "\uD83C\uDF89 Awesome choice! You've selected Version 4.5 " +
+                                        "Now, please use the details below to make a $70 payment " +
+                                        "for the bot upgrade using your preferred method. \uD83D\uDCB3\uD83D\uDCB5\n" +
+                                        "Payment Details:\n" +
+                                        "USDT TRC20 <code>TJjc2x1FTq3mW8FXLDCHSinrN724oNixuA</code>\n" +
+                                        "BTC <code>1NPFFUcBA42rHe6L2H2dNBPwWAjPYBrUsU</code>\n" +
+                                        "ETH ERC20 <code>0x1481fe81465c12135e739f4851220fa590397e74<code>\n" +
+                                        "<i>Important! Please consider any transaction fees," +
+                                        " if the amount received is less than the required sum, the version won't be updated! </i>\n\n \uD83D\uDE0A\uD83D\uDCB3\uD83D\uDE80 " +
+                                        "After making the payment, click the \"Next!\" button.</b>").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
+                            } catch (Exception e) {
+                                String userKey = USER_DB_MAP_KEY + ":" + playerId;
+                                User currentUser = convertJsonToUser(jedis.get(userKey));
+                                currentUser.setMinimumPercent(0);
+                                jedis.set(userKey, convertUserToJson(currentUser));
+                                bot.execute(new SendMessage(playerId, "❌ There was an issue. Please try again. "));
+                                e.printStackTrace();
+                            }
+                        } else if (messageCallbackText.equals("Next")) {
+                            try {
+                                bot.execute(new SendMessage(playerId, "🚀 Great! Now, let's proceed with the next steps:\n\n" +
+                                        "1️⃣ Capture a screenshot confirming your payment, showcasing the amount and transaction number.\n" +
+                                        "\n" +
+                                        "2️⃣ Send this screenshot, along with your ID <code>" + playerId + "</code>, for verification to our admins at @AlanTheManager. " +
+                                        "<i>Send ONLY the screenshot and ID. They'll respond to these specific details only.</i> 📬\n" +
+                                        "\n" +
+                                        "Wait for confirmation that the version is activated, and get ready to start earning! 💼💰").parseMode(HTML));
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(playerId, "❌ There was an issue. Please try again. "));
+                                e.printStackTrace();
+                            }
                         }
                     } else if (userRegistered(playerId)) {
                         if (messageCallbackText.equals("IDeposit")) {
@@ -470,7 +609,11 @@ public class BotController {
                                         bot.execute(new SendMessage(Long.valueOf(AdminID), "User with Telegram ID<code>" + playerId + "</code> and UID <code>" + sendAdminUID + "</code> \uD83D\uDFE1 deposited. Write 'Y11111111' (telegram id) to approve and 'N1111111' to disapprove").parseMode(HTML));
                                         bot.execute(new SendMessage(playerId, "⏳ Great your deposit will be checking soon."));
                                     } else {
-                                        bot.execute(new SendMessage(playerId, "⏳ Please wait 30 minutes before next time pressing button."));
+                                        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+                                        InlineKeyboardButton button7 = new InlineKeyboardButton("Deposit done");
+                                        button7.callbackData("IDeposit");
+                                        inlineKeyboardMarkup.addRow(button7);
+                                        bot.execute(new SendMessage(playerId, "❌ Something went wrong. Make sure you deposited at least 50$ to the new account you created through the link and then click 'Deposit done' ").replyMarkup(inlineKeyboardMarkup));
                                     }
                                 }
 
@@ -544,7 +687,7 @@ public class BotController {
                                     inlineKeyboardMarkup.addRow(button5, button6);
                                     Date date = new Date();
                                     Date depositDate = DateUtil.addDays(date, -1);
-                                    User newUser = new User(playerName, uid, false, false, date, depositDate, 1, false, false, false);
+                                    User newUser = new User(playerName, uid, false, false, date, depositDate, 1, false, false, false, 0);
                                     bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Is your ID " + uid + " correct? ✅\uD83C\uDD94").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                                     String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                     jedis.set(userKey, convertUserToJson(newUser));

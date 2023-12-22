@@ -11,22 +11,19 @@ public class User implements Serializable {
     private Date lastTimeTexted;
     private Date lastTimePressedDeposit;
     private int timesTextWasSent;
-    private boolean canWriteToSupport;
-    private boolean canPressDeposit;
-    private boolean canPressRegister;
 
-
-    public boolean isCanWriteToSupport() {
-        return canWriteToSupport;
+    public int getMinimumPercent() {
+        return minimumPercent;
     }
 
-    public void setCanWriteToSupport(boolean canWriteToSupport) {
-        this.canWriteToSupport = canWriteToSupport;
+    public void setMinimumPercent(int minimumPercent) {
+        this.minimumPercent = minimumPercent;
     }
 
-    public User(String name, String UID, boolean registered, boolean deposited, Date lastTimeTexted,
-                Date lastTimePressedDeposit, int timesTextWasSent, boolean canWriteToSupport,
-                boolean canPressDeposit, boolean canPressRegister) {
+    public User(String name, String UID, boolean registered, boolean deposited,
+                Date lastTimeTexted, Date lastTimePressedDeposit, int timesTextWasSent,
+                boolean canWriteToSupport, boolean canPressDeposit,
+                boolean canPressRegister, int minimumPercent) {
         this.name = name;
         this.UID = UID;
         this.registered = registered;
@@ -37,7 +34,23 @@ public class User implements Serializable {
         this.canWriteToSupport = canWriteToSupport;
         this.canPressDeposit = canPressDeposit;
         this.canPressRegister = canPressRegister;
+        this.minimumPercent = minimumPercent;
     }
+
+    private boolean canWriteToSupport;
+    private boolean canPressDeposit;
+    private boolean canPressRegister;
+    private int minimumPercent;
+
+    public boolean isCanWriteToSupport() {
+        return canWriteToSupport;
+    }
+
+    public void setCanWriteToSupport(boolean canWriteToSupport) {
+        this.canWriteToSupport = canWriteToSupport;
+    }
+
+
 
     public Date getLastTimePressedDeposit() {
         return lastTimePressedDeposit;
