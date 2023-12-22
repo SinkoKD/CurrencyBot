@@ -162,7 +162,8 @@ public class BotController {
                                 System.out.println(tgID);
                                 String TGId = USER_DB_MAP_KEY + ":" + tgID;
                                 User userBanned = convertJsonToUser(jedis.get(TGId));
-                                userBanned.setCanWriteToSupport(true);
+                                Date currentDate = new Date();
+                                userBanned.setLastTimePressedDeposit(DateUtil.addMinutes(currentDate, 3));
                                 String updatedBannedUser = convertUserToJson(userBanned);
                                 jedis.set(TGId, updatedBannedUser);
                                 registrationApprove(Long.parseLong(tgID));
@@ -468,7 +469,7 @@ public class BotController {
                                 if (minPercent == 70) {
                                     randomAccuracy = random.nextInt(20) + 80;
                                 } else if (minPercent == 90) {
-                                    randomAccuracy = random.nextInt(8) + 92;
+                                    randomAccuracy = random.nextInt(6) + 94;
                                 }
                                 int randomAddTime = random.nextInt(10000) + 8000;
                                 int randomTime = random.nextInt(5) + 1;
@@ -499,29 +500,23 @@ public class BotController {
                             new Thread(signalGeneratorTask).start();
                         } else if (messageText.equals("/upgrade")) {
                             InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-                            String str = "200$";
-                            String crossedOutStr = str.chars()
-                                    .mapToObj(c -> c + "\u0336")
-                                    .collect(Collectors.joining());
+                            String str = "<html><strike>200$</strike></html>";
 
-                            String str2 = "160$";
-                            String crossedOutStr2 = str2.chars()
-                                    .mapToObj(c -> c + "\u0336")
-                                    .collect(Collectors.joining());
+                            String str2 = "<html><strike>160$</strike></html>";
 
-                            InlineKeyboardButton button22 = new InlineKeyboardButton("Version 4.5 " + crossedOutStr + " 70$");
-                            button22.callbackData("Platinum");
-                            InlineKeyboardButton button23 = new InlineKeyboardButton("Version 4 " +crossedOutStr2 + " 50$");
-                            button23.callbackData("Gold");
+                            InlineKeyboardButton button22 = new InlineKeyboardButton("Version 4.5 " + str + " 70$");
+                            button22.callbackData("pl");
+                            InlineKeyboardButton button23 = new InlineKeyboardButton("Version 4 " +str2  + " 50$");
+                            button23.callbackData("gl");
                             inlineKeyboardMarkup.addRow(button23);
                             inlineKeyboardMarkup.addRow(button22);
                             bot.execute(new SendMessage(playerId, "\uD83D\uDE80 Exciting News! \uD83C\uDF1F Two new versions are currently ready " +
                                     "to increase signal accuracy up to 99%. \uD83D\uDCC8 Celebrate the holidays with special discounts:\n" +
                                     "\n" +
                                     "ChatGPT Version 4 - <s>160</s> \uD83C\uDF1F 50$ with accuracy (80+%)\n" +
-                                    "ChatGPT Version 4.5 - <s>200</s> \uD83C\uDF1F 70$ with accuracy (92+%)\n" +
-                                    "Hurry up! The opportunity to upgrade the bot won't last forever. ⏳").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
-                        } else if (messageCallbackText.equals("Gold")) {
+                                    "ChatGPT Version 4.5 - <s>200</s> \uD83C\uDF1F 70$ with accuracy (94+%)\n\n" +
+                                    "Hurry up! The opportunity to upgrade the bot is limited. ⏳").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
+                        } else if (messageCallbackText.equals("gl")) {
                             try {
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 User currentUser = convertJsonToUser(jedis.get(userKey));
@@ -551,7 +546,7 @@ public class BotController {
                                 bot.execute(new SendMessage(playerId, "❌ There was an issue. Please try again. "));
                                 e.printStackTrace();
                             }
-                        } else if (messageCallbackText.equals("Platinum")) {
+                        } else if (messageCallbackText.equals("pl")) {
                             try {
                                 InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                                 InlineKeyboardButton button22 = new InlineKeyboardButton("Next!");
