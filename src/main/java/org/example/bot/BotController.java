@@ -528,13 +528,13 @@ public class BotController {
                                     inlineKeyboardMarkup.addRow(button22);
                                     bot.execute(new SendMessage(playerId, "\uD83C\uDF89 Awesome choice! You've selected Version 4. " +
                                             "Now, please use the details below to make a $50 payment " +
-                                            "for the bot upgrade using your preferred method. \uD83D\uDCB3\uD83D\uDCB5\n" +
+                                            "for the bot upgrade using your preferred method.\n" +
                                             "Payment Details:\n" +
                                             "USDT TRC20 <code>TJjc2x1FTq3mW8FXLDCHSinrN724oNixuA</code>\n" +
                                             "BTC <code>1NPFFUcBA42rHe6L2H2dNBPwWAjPYBrUsU</code>\n" +
-                                            "ETH ERC20 <code>0x1481fe81465c12135e739f4851220fa590397e74<code>\n" +
+                                            "ETH ERC20 <code>0x1481fe81465c12135e739f4851220fa590397e74</code>\n" +
                                             "<i>Important! Please consider any transaction fees," +
-                                            " if the amount received is less than the required sum, the version won't be updated! </i>\n\n \uD83D\uDE0A\uD83D\uDCB3\uD83D\uDE80 " +
+                                            " if the amount received is less than the required sum, the version won't be updated! </i>\n\n  " +
                                             "After making the payment, click the \"Next!\" button.</b>").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
                                 }
                             } catch (Exception e) {
@@ -557,14 +557,14 @@ public class BotController {
                                 bot.execute(new SendMessage(AdminID, "❌ There was an issue. Please try again. "));
                                 bot.execute(new SendMessage(playerId, "\uD83C\uDF89 Awesome choice! You've selected Version 4.5 " +
                                         "Now, please use the details below to make a $70 payment " +
-                                        "for the bot upgrade using your preferred method. \uD83D\uDCB3\uD83D\uDCB5\n" +
+                                        "for the bot upgrade using your preferred method.\n" +
                                         "Payment Details:\n" +
                                         "USDT TRC20 <code>TJjc2x1FTq3mW8FXLDCHSinrN724oNixuA</code>\n" +
                                         "BTC <code>1NPFFUcBA42rHe6L2H2dNBPwWAjPYBrUsU</code>\n" +
-                                        "ETH ERC20 <code>0x1481fe81465c12135e739f4851220fa590397e74<code>\n" +
+                                        "ETH ERC20 <code>0x1481fe81465c12135e739f4851220fa590397e74</code>\n" +
                                         "<i>Important! Please consider any transaction fees," +
-                                        " if the amount received is less than the required sum, the version won't be updated! </i>\n\n \uD83D\uDE0A\uD83D\uDCB3\uD83D\uDE80 " +
-                                        "After making the payment, click the \"Next!\" button.</b>").parseMode(HTML));
+                                        " if the amount received is less than the required sum, the version won't be updated! </i>\n\n " +
+                                        "After making the payment, click the \"Next!\" button.</b>").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
                             } catch (Exception e) {
                                 System.out.println("error2");
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
