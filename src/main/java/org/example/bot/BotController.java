@@ -564,7 +564,7 @@ public class BotController {
                                         "ETH ERC20 <code>0x1481fe81465c12135e739f4851220fa590397e74<code>\n" +
                                         "<i>Important! Please consider any transaction fees," +
                                         " if the amount received is less than the required sum, the version won't be updated! </i>\n\n \uD83D\uDE0A\uD83D\uDCB3\uD83D\uDE80 " +
-                                        "After making the payment, click the \"Next!\" button.</b>").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
+                                        "After making the payment, click the \"Next!\" button.</b>").parseMode(HTML));
                             } catch (Exception e) {
                                 System.out.println("error2");
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
