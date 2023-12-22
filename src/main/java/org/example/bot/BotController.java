@@ -518,6 +518,7 @@ public class BotController {
                                 System.out.println("here" + playerName + playerId);
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 User currentUser = convertJsonToUser(jedis.get(userKey));
+                                System.out.println(currentUser.getMinimumPercent());
                                 if (currentUser.getMinimumPercent() == 90) {
                                     bot.execute(new SendMessage(playerId, "<b>\uD83D\uDFE2 You shouldn't pick lower plan.</b>").parseMode(HTML));
                                 } else {
@@ -553,6 +554,7 @@ public class BotController {
                                 InlineKeyboardButton button22 = new InlineKeyboardButton("Next!");
                                 button22.callbackData("Next");
                                 inlineKeyboardMarkup.addRow(button22);
+                                bot.execute(new SendMessage(AdminID, "❌ There was an issue. Please try again. "));
                                 bot.execute(new SendMessage(playerId, "\uD83C\uDF89 Awesome choice! You've selected Version 4.5 " +
                                         "Now, please use the details below to make a $70 payment " +
                                         "for the bot upgrade using your preferred method. \uD83D\uDCB3\uD83D\uDCB5\n" +
