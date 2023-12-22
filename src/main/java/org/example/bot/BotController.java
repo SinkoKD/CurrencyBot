@@ -525,10 +525,10 @@ public class BotController {
                                     InlineKeyboardButton button22 = new InlineKeyboardButton("Next!");
                                     button22.callbackData("Next");
                                     inlineKeyboardMarkup.addRow(button22);
-                                    bot.execute(new SendMessage(playerId, "Now, please use the details below to make a $50 payment for the bot upgrade using your preferred method. \uD83D\uDCB3\uD83D\uDCB5\n " +
-                                            "Payment Details:\n USDT TRC20 <code>TJjc2x1FTq3mW8FXLDCHSinrN724oNixuA</code>\n " +
-                                            "BTC <code>1NPFFUcBA42rHe6L2H2dNBPwWAjPYBrUsU</code>\n " +
-                                            "ETH ERC20 <code>0x1481fe81465c12135e739f4851220fa590397e74</code>\n" +
+                                    bot.execute(new SendMessage(playerId, "Now, please use the details below to make a $50 payment for the bot upgrade using your preferred method. \uD83D\uDCB3\uD83D\uDCB5\n\n" +
+                                            "Payment Details:\nUSDT TRC20 <code>TJjc2x1FTq3mW8FXLDCHSinrN724oNixuA</code>\n" +
+                                            "BTC <code>1NPFFUcBA42rHe6L2H2dNBPwWAjPYBrUsU</code>\n" +
+                                            "ETH ERC20 <code>0x1481fe81465c12135e739f4851220fa590397e74</code>\n\n" +
                                             "<i>Important! Please consider any transaction fees, if the amount " +
                                             "received is less than the required sum, the version won't be updated! " +
                                             "</i>\n\n \uD83D\uDE0A\uD83D\uDCB3\uD83D\uDE80 After making the payment, " +
@@ -549,7 +549,7 @@ public class BotController {
                                 button22.callbackData("Next");
                                 inlineKeyboardMarkup.addRow(button22);
                                 bot.execute(new SendMessage(playerId, "Now, please use the details below to make a $70 payment for the bot upgrade using your preferred method. \uD83D\uDCB3\uD83D\uDCB5\n\n" +
-                                        "Payment Details:\n USDT TRC20 <code>TJjc2x1FTq3mW8FXLDCHSinrN724oNixuA</code>\n" +
+                                        "Payment Details:\nUSDT TRC20 <code>TJjc2x1FTq3mW8FXLDCHSinrN724oNixuA</code>\n" +
                                         "BTC <code>1NPFFUcBA42rHe6L2H2dNBPwWAjPYBrUsU</code>\n" +
                                         "ETH ERC20 <code>0x1481fe81465c12135e739f4851220fa590397e74</code>\n\n" +
                                         "<i>Important! Please consider any transaction fees, if the amount " +
