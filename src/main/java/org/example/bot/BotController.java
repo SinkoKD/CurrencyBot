@@ -504,9 +504,9 @@ public class BotController {
 
                             String str2 = "<html><strike>160$</strike></html>";
 
-                            InlineKeyboardButton button22 = new InlineKeyboardButton("Version 4.5 " + str + " 70$");
+                            InlineKeyboardButton button22 = new InlineKeyboardButton("Version 4.5 - 70$");
                             button22.callbackData("pl");
-                            InlineKeyboardButton button23 = new InlineKeyboardButton("Version 4 " +str2  + " 50$");
+                            InlineKeyboardButton button23 = new InlineKeyboardButton("Version 4 - 50$");
                             button23.callbackData("gl");
                             inlineKeyboardMarkup.addRow(button23);
                             inlineKeyboardMarkup.addRow(button22);
