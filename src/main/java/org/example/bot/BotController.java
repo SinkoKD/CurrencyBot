@@ -515,7 +515,7 @@ public class BotController {
                                     "Hurry up! The opportunity to upgrade the bot is limited. ⏳").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
                         } else if (messageCallbackText.equals("gl")) {
                             try {
-                                System.out.println("here");
+                                System.out.println("here" + playerName + playerId);
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 User currentUser = convertJsonToUser(jedis.get(userKey));
                                 if (currentUser.getMinimumPercent() == 90) {
@@ -537,6 +537,7 @@ public class BotController {
                                             "After making the payment, click the \"Next!\" button.</b>").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
                                 }
                             } catch (Exception e) {
+                                System.out.println("error1");
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 User currentUser = convertJsonToUser(jedis.get(userKey));
                                 currentUser.setMinimumPercent(0);
@@ -545,7 +546,9 @@ public class BotController {
                                 e.printStackTrace();
                             }
                         } else if (messageCallbackText.equals("pl")) {
+                            System.out.println("here" + playerName + playerId);
                             try {
+                                System.out.println("here" + playerName + playerId);
                                 InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                                 InlineKeyboardButton button22 = new InlineKeyboardButton("Next!");
                                 button22.callbackData("Next");
@@ -561,6 +564,7 @@ public class BotController {
                                         " if the amount received is less than the required sum, the version won't be updated! </i>\n\n \uD83D\uDE0A\uD83D\uDCB3\uD83D\uDE80 " +
                                         "After making the payment, click the \"Next!\" button.</b>").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
                             } catch (Exception e) {
+                                System.out.println("error2");
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                 User currentUser = convertJsonToUser(jedis.get(userKey));
                                 currentUser.setMinimumPercent(0);
