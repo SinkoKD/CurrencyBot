@@ -429,7 +429,7 @@ public class BotController {
                         bot.execute(new SendMessage(playerId, "☝️ Here is a video example of how I work.").parseMode(HTML));
 
                     } else if (userDeposited(playerId) || userDeposited(playerId)) {
-                        if (messageText.equals("Get Signal") || messageCallbackText.equals("getSignal") || messageText.equals("Get signal") || messageText.equals("get signal")) {
+                        if (messageText.equals("Get Signal") || messageCallbackText.equals("getSignal")|| messageText.equals("/getsignal")  || messageText.equals("Get signal") || messageText.equals("get signal")) {
                             List<String> listOfPairs = Arrays.asList(
                                     "AUD/CAD OTC", "AUD/CHF OTC", "AUD/NZD OTC", "CAD/CHF OTC", "EUR/CHF OTC",
                                     "EUR/JPY OTC", "EUR/USD OTC", "GBP/JPY OTC", "NZD/JPY OTC", "NZD/USD OTC",
