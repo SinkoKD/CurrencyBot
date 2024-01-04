@@ -566,20 +566,20 @@ public class BotController {
 //                                bot.execute(new SendMessage(playerId, "❌ There was an issue. Please try again. "));
 //                                e.printStackTrace();
 //                            }
-//                        } else if (messageCallbackText.equals("Next")) {
-//                            try {
-//                                bot.execute(new SendMessage(playerId, "🚀 Great! Now, let's proceed with the next steps:\n\n" +
-//                                        "1️⃣ Capture a screenshot confirming your payment, showcasing the amount and transaction number.\n" +
-//                                        "\n" +
-//                                        "2️⃣ Send this screenshot, along with your ID <code>" + playerId + "</code>, for verification to our admins at @AmeliaEvansss. " +
-//                                        "<i>Send ONLY the screenshot and ID. They'll respond to these specific details only.</i> 📬\n" +
-//                                        "\n" +
-//                                        "Wait for confirmation that the version is activated, and get ready to start earning! 💼💰").parseMode(HTML));
-//                            } catch (Exception e) {
-//                                bot.execute(new SendMessage(playerId, "❌ There was an issue. Please try again. "));
-//                                e.printStackTrace();
-//                            }
-//                        }
+                          else if (messageCallbackText.equals("Next")) {
+                            try {
+                                bot.execute(new SendMessage(playerId, "🚀 Great! Now, let's proceed with the next steps:\n\n" +
+                                        "1️⃣ Capture a screenshot confirming your payment, showcasing the amount and transaction number.\n" +
+                                        "\n" +
+                                        "2️⃣ Send this screenshot, along with your ID <code>" + playerId + "</code>, for verification to our admins at @AmeliaEvansss. " +
+                                        "<i>Send ONLY the screenshot and ID. They'll respond to these specific details only.</i> 📬\n" +
+                                        "\n" +
+                                        "Wait for confirmation that the version is activated, and get ready to start earning! 💼💰").parseMode(HTML));
+                            } catch (Exception e) {
+                                bot.execute(new SendMessage(playerId, "❌ There was an issue. Please try again. "));
+                                e.printStackTrace();
+                            }
+                        }
                     } else if (userRegistered(playerId)) {
                         if (messageCallbackText.equals("IDeposit")) {
                             try {
