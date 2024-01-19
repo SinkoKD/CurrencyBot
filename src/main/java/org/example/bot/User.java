@@ -7,10 +7,20 @@ public class User implements Serializable {
     private String name;
     private String UID;
     private boolean registered;
+
+    public String getLanguageSelected() {
+        return languageSelected;
+    }
+
+    public void setLanguageSelected(String languageSelected) {
+        this.languageSelected = languageSelected;
+    }
+
     private boolean deposited;
     private Date lastTimeTexted;
     private Date lastTimePressedDeposit;
     private int timesTextWasSent;
+    private String languageSelected;
 
     public int getMinimumPercent() {
         return minimumPercent;
@@ -22,7 +32,7 @@ public class User implements Serializable {
 
     public User(String name, String UID, boolean registered, boolean deposited,
                 Date lastTimeTexted, Date lastTimePressedDeposit, int timesTextWasSent,
-                boolean canWriteToSupport, boolean canPressDeposit,
+                String languageSelected, boolean canWriteToSupport, boolean canPressDeposit,
                 boolean canPressRegister, int minimumPercent) {
         this.name = name;
         this.UID = UID;
@@ -31,6 +41,7 @@ public class User implements Serializable {
         this.lastTimeTexted = lastTimeTexted;
         this.lastTimePressedDeposit = lastTimePressedDeposit;
         this.timesTextWasSent = timesTextWasSent;
+        this.languageSelected = languageSelected;
         this.canWriteToSupport = canWriteToSupport;
         this.canPressDeposit = canPressDeposit;
         this.canPressRegister = canPressRegister;

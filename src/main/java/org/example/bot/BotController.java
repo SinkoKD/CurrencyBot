@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,6 +32,7 @@ public class BotController {
 
     public static JedisPool jedisPool;
     public static final String USER_DB_MAP_KEY = "userDBMap";
+    private static final Logger logger = Logger.getLogger(BotController.class.getName());
 
     public static void main(String[] args) throws URISyntaxException {
         String TOKEN = "";
@@ -43,10 +45,10 @@ public class BotController {
             TOKEN = prop.getProperty("TOKEN");
 
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.severe("An error occurred in your method or class: " + e.getMessage());
         }
-
-        String redisUriString = System.getenv("REDIS_URL");
+        String redisUriString = "redis://localhost:6379";
+      //  String redisUriString = System.getenv("REDIS_URL");+
         jedisPool = new JedisPool(new URI(redisUriString));
 
         TelegramBot bot = new TelegramBot(TOKEN);
@@ -98,20 +100,19 @@ public class BotController {
                             String updatedUser = convertUserToJson(checkedUser);
                             jedis.set(userKey, updatedUser);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            logger.severe("An error occurred in your method or class: " + e.getMessage());
                         }
                     }
 
                     try {
-                        String userKey = AdminID;
-                        User checkedAdmin = convertJsonToUser(jedis.get(userKey));
+                        User checkedAdmin = convertJsonToUser(jedis.get(AdminID));
                         Date currentDate = new Date();
                         Date checkAdminDate = DateUtil.addDays(checkedAdmin.getLastTimeTexted(), 2);
                         System.out.println("Im not there");
                         if (checkAdminDate.getTime() < currentDate.getTime()) {
                             System.out.println("Im there");
                             checkedAdmin.setLastTimeTexted(currentDate);
-                            jedis.set(userKey, convertUserToJson(checkedAdmin));
+                            jedis.set(AdminID, convertUserToJson(checkedAdmin));
                             System.out.println("Admin done");
                             Set<String> userKeys = jedis.keys("userDBMap:*");
                             System.out.println("Keys done");
@@ -146,7 +147,7 @@ public class BotController {
                             }
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        logger.severe("An error occurred in your method or class: " + e.getMessage());
                     }
 
                     if (String.valueOf(playerId).equals(AdminID)) {
@@ -178,7 +179,7 @@ public class BotController {
                                 setTo1TimesWasSent(tgID);
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please ЙЙЙЙЙЙ "));
-                                e.printStackTrace();
+                                logger.severe("An error occurred in your method or class: " + e.getMessage());
                             }
                         } else if (messageText.startsWith("reply:")) {
                             int indexOfAnd = messageText.indexOf("&");
@@ -194,7 +195,7 @@ public class BotController {
                                 bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " was fully deleted"));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
-                                e.printStackTrace();
+                                logger.severe("An error occurred in your method or class: " + e.getMessage());
                             }
                         } else if (messageText.startsWith("banSupport:")) {
                             try {
@@ -206,7 +207,7 @@ public class BotController {
                                 bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " was banned to write to support"));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
-                                e.printStackTrace();
+                                logger.severe("An error occurred in your method or class: " + e.getMessage());
                             }
                         } else if (messageText.startsWith("banDeposit30:")) {
                             try {
@@ -219,7 +220,7 @@ public class BotController {
                                 bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " was banned to press button 'Deposit done' for 30 minutes. "));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
-                                e.printStackTrace();
+                                logger.severe("An error occurred in your method or class: " + e.getMessage());
                             }
                         } else if (messageText.startsWith("giveV4:")) {
                             try {
@@ -232,7 +233,7 @@ public class BotController {
                                 bot.execute(new SendMessage(messageText.substring(7), "✅ Congratulations! Now I've upgraded and am using version 4!"));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ There was an issue. Please try again. "));
-                                e.printStackTrace();
+                                logger.severe("An error occurred in your method or class: " + e.getMessage());
                             }
                         } else if (messageText.startsWith("giveV4.5:")) {
                             try {
@@ -245,7 +246,7 @@ public class BotController {
                                 bot.execute(new SendMessage(messageText.substring(9), "✅ Congratulations! Now I've upgraded and am using version 4.5!"));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ There was an issue. Please try again. "));
-                                e.printStackTrace();
+                                logger.severe("An error occurred in your method or class: " + e.getMessage());
                             }
                         } else if (messageText.startsWith("deleteDeposit:")) {
                             try {
@@ -255,7 +256,7 @@ public class BotController {
                                 bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " got deleted"));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
-                                e.printStackTrace();
+                                logger.severe("An error occurred in your method or class: " + e.getMessage());
                             }
                         } else if (messageText.startsWith("deleteRegistration:")) {
                             try {
@@ -265,7 +266,7 @@ public class BotController {
                                 bot.execute(new SendMessage(AdminID, "User with ID " + TGId + " got register disapprove"));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
-                                e.printStackTrace();
+                                logger.severe("An error occurred in your method or class: " + e.getMessage());
                             }
                         } else if (messageText.startsWith("getUserName:")) {
                             try {
@@ -274,7 +275,7 @@ public class BotController {
                                 bot.execute(new SendMessage(AdminID, "Name of user is: " + newUser.getName() + " his TG id: " + TGId));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
-                                e.printStackTrace();
+                                logger.severe("An error occurred in your method or class: " + e.getMessage());
                             }
                         } else if (messageText.startsWith("setCheckForUID:")) {
                             try {
@@ -286,7 +287,7 @@ public class BotController {
                                 bot.execute(new SendMessage(AdminID, "First numbers is: " + newCheck + "."));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
-                                e.printStackTrace();
+                                logger.severe("An error occurred in your method or class: " + e.getMessage());
                             }
                         } else if (messageText.startsWith("createNewPost:")) {
                             try {
@@ -300,7 +301,7 @@ public class BotController {
                                 bot.execute(new SendMessage(AdminID, "The message " + postText + " has been sent."));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
-                                e.printStackTrace();
+                                logger.severe("An error occurred in your method or class: " + e.getMessage());
                             }
                         } else if (messageText.startsWith("D") || messageText.startsWith("d") || messageText.startsWith("В") || messageText.startsWith("в")) {
                             String tgID = messageText.substring(1);
@@ -319,8 +320,8 @@ public class BotController {
                                 String tgID = messageText.substring(1);
                                 depositApprove(Long.parseLong(tgID));
                                 depositApprove(Long.parseLong(tgID));
-                                Keyboard replyKeyboardMarkup = (Keyboard) new ReplyKeyboardMarkup(
-                                        new String[]{"Get Signal"});
+                                Keyboard replyKeyboardMarkup = new ReplyKeyboardMarkup(
+                                        "Get Signal");
                                 bot.execute(new SendMessage(AdminID, "Deposit for " + tgID + " was approved"));
                                 bot.execute(new SendMessage(tgID, "✅ Great! Everything is ready! You can start getting signals. For this click on 'Get Signal' or write it manually. \n" +
                                         "\n" +
@@ -333,7 +334,7 @@ public class BotController {
                                 setTo1TimesWasSent(tgID);
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(AdminID, "❌ An error occurred. Please try again. "));
-                                e.printStackTrace();
+                                logger.severe("An error occurred in your method or class: " + e.getMessage());
                             }
                         } else if (messageText.startsWith("N") || messageText.startsWith("n") || messageText.startsWith("Т") || messageText.startsWith("т")) {
                             String tgID = messageText.substring(1);
@@ -452,19 +453,19 @@ public class BotController {
                                     currentUser.setMinimumPercent(0);
                                     jedis.set(userKey, convertUserToJson(currentUser));
                                     bot.execute(new SendMessage(AdminID, "❌ There was an issue. Please try again. "));
-                                    e.printStackTrace();
+                                    logger.severe("An error occurred in your method or class: " + e.getMessage());
                                 }
                                 bot.execute(new SendMessage(playerId, "⌛️ Looking for the best pair...").parseMode(HTML));
                                 try {
                                     Thread.sleep(5000);
                                 } catch (InterruptedException e) {
                                     bot.execute(new SendMessage(playerId, "❌ An error occurred. Please try again. "));
-                                    e.printStackTrace();
+                                    logger.severe("An error occurred in your method or class: " + e.getMessage());
                                 }
                                 Random random = new Random();
                                 int randomNumber = random.nextInt(listOfPairs.size());
                                 int randomUp = random.nextInt(2);
-                                String direction = "";
+                                String direction;
                                 if (randomUp == 0) {
                                     direction = "⬆️ Direction: <b>UP</b> ";
                                 } else {
@@ -477,7 +478,7 @@ public class BotController {
                                     randomAccuracy = random.nextInt(6) + 94;
                                 }
                                 int randomAddTime = random.nextInt(10000) + 8000;
-                                int randomTime = random.nextInt(5) + 1;
+                                int randomTime = random.nextInt(3) + 1;
                                 String pickedPair = listOfPairs.get(randomNumber);
                                 EditMessageText editMessageText = new EditMessageText(playerId, messageId + 1, "Pair <b>" + pickedPair + "</b> has been picked. I am conducting an analysis on it.").parseMode(HTML);
                                 bot.execute(editMessageText);
@@ -485,7 +486,7 @@ public class BotController {
                                     Thread.sleep(5000);
                                 } catch (InterruptedException e) {
                                     bot.execute(new SendMessage(playerId, "❌ An error occurred. Please try again. "));
-                                    e.printStackTrace();
+                                    logger.severe("An error occurred in your method or class: " + e.getMessage());
                                 }
                                 InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                                 InlineKeyboardButton button22 = new InlineKeyboardButton("Get new signal");
@@ -496,9 +497,9 @@ public class BotController {
                                 try {
                                     Thread.sleep(randomAddTime);
                                 } catch (InterruptedException e) {
-                                    e.printStackTrace();
+                                    logger.severe("An error occurred in your method or class: " + e.getMessage());
                                 }
-                                Keyboard replyKeyboardMarkup = (Keyboard) new ReplyKeyboardMarkup(
+                                Keyboard replyKeyboardMarkup = new ReplyKeyboardMarkup(
                                         new String[]{"Get Signal"});
                                 bot.execute(new SendMessage(playerId, "<b>GO!</b>").parseMode(HTML).replyMarkup(replyKeyboardMarkup));
                             };
@@ -545,7 +546,7 @@ public class BotController {
                                 currentUser.setMinimumPercent(0);
                                 jedis.set(userKey, convertUserToJson(currentUser));
                                 bot.execute(new SendMessage(playerId, "❌ There was an issue. Please try again. "));
-                                e.printStackTrace();
+                                logger.severe("An error occurred in your method or class: " + e.getMessage());
                             }
                         } else if (messageCallbackText.equals("pl")) {
                             try {
@@ -568,7 +569,7 @@ public class BotController {
                                 currentUser.setMinimumPercent(0);
                                 jedis.set(userKey, convertUserToJson(currentUser));
                                 bot.execute(new SendMessage(playerId, "❌ There was an issue. Please try again. "));
-                                e.printStackTrace();
+                                logger.severe("An error occurred in your method or class: " + e.getMessage());
                             }
                         } else if (messageCallbackText.equals("Next")) {
                             try {
@@ -581,7 +582,7 @@ public class BotController {
                                         "Wait for confirmation that the version is activated, and get ready to start earning! 💼💰").parseMode(HTML));
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(playerId, "❌ There was an issue. Please try again. "));
-                                e.printStackTrace();
+                                logger.severe("An error occurred in your method or class: " + e.getMessage());
                             }
                         }
 
@@ -615,7 +616,7 @@ public class BotController {
 
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(playerId, "❌ An error occurred. Please try again. "));
-                                e.printStackTrace();
+                                logger.severe("An error occurred in your method or class: " + e.getMessage());
                             }
                         } else if (userDeposited(playerId)) {
                             bot.execute(new SendMessage(playerId, "❌ An error occurred. Please try again. "));
@@ -665,7 +666,7 @@ public class BotController {
                                 }
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(playerId, "❌ An error occurred. Please send your UID again. "));
-                                e.printStackTrace();
+                                logger.severe("An error occurred in your method or class: " + e.getMessage());
                             }
                         } else if (messageText.startsWith("/") || messageText.equals("Get Signal")) {
                             bot.execute(new SendMessage(playerId, "Before trying any signals you need to register"));
@@ -683,7 +684,7 @@ public class BotController {
                                     inlineKeyboardMarkup.addRow(button5, button6);
                                     Date date = new Date();
                                     Date depositDate = DateUtil.addDays(date, -1);
-                                    User newUser = new User(playerName, uid, false, false, date, depositDate, 1, false, false, false, 0);
+                                    User newUser = new User(playerName, uid, false, false, date, depositDate, 1, "en", false, false, false, 0);
                                     bot.execute(new SendMessage(playerId, "\uD83D\uDCCC Is your ID " + uid + " correct? ✅\uD83C\uDD94").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
                                     String userKey = USER_DB_MAP_KEY + ":" + playerId;
                                     jedis.set(userKey, convertUserToJson(newUser));
@@ -692,22 +693,20 @@ public class BotController {
                                 }
                             } catch (Exception e) {
                                 bot.execute(new SendMessage(playerId, "❌ There was an issue. Please send your ID again. Follow the instructions to receive signals. "));
-                                e.printStackTrace();
+                                logger.severe("An error occurred in your method or class: " + e.getMessage());
                             }
                         }
                     }
                 });
 
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.severe("An error occurred in your method or class: " + e.getMessage());
             }
 
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
         });
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            jedisPool.close();
-        }));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> jedisPool.close()));
     }
 
 
