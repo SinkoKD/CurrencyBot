@@ -47,8 +47,8 @@ public class BotController {
         } catch (IOException e) {
             logger.severe("An error occurred in your method or class: " + e.getMessage());
         }
-       // String redisUriString = "redis://localhost:6379";
-       String redisUriString = System.getenv("REDIS_URL");
+        // String redisUriString = "redis://localhost:6379";
+        String redisUriString = System.getenv("REDIS_URL");
         jedisPool = new JedisPool(new URI(redisUriString));
 
         TelegramBot bot = new TelegramBot(TOKEN);
