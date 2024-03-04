@@ -168,9 +168,12 @@ public class BotController {
                                 jedis.set(TGId, updatedBannedUser);
                                 registrationApprove(Long.parseLong(tgID));
                                 registrationApprove(Long.parseLong(tgID));
-                                bot.execute(new SendMessage(tgID, "✅ Great, your account is confirmed! The last step is to make any deposit at least 50$ by any convenient way. After that press the button 'Deposit done'.\n" +
+                                bot.execute(new SendMessage(tgID, "✅ Great, your account is confirmed! The last step is to " +
+                                        "make any deposit at least 50$ by any convenient way. After that press the button 'Deposit done'.\n" +
                                         "\n" +
-                                        "I would like to note that the recommended starting deposit of $50 - $350. Also use promo code 50START to get an extra 50% of your deposit. For example, with a deposit of 100$ you will get 50$ additional. It means that you will get 150$ in total.\n" +
+                                        "I would like to note that the recommended starting deposit of $50 - $350. " +
+                                        "Also use promo code 50START to get an extra 50% of your deposit. " +
+                                        "For example, with a deposit of 100$ you will get 50$ additional. It means that you will get 150$ in total.\n" +
                                         "\n" +
                                         "At the bottom there is a video instruction on how to top up the account.").replyMarkup(inlineKeyboardMarkup));
                                 bot.execute(new SendVideo(tgID, videoDepositFile));
@@ -507,8 +510,8 @@ public class BotController {
                         } else if (messageText.equals("/upgrade")) {
                             InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
-                            InlineKeyboardButton button8 = new InlineKeyboardButton("Version 4 - 50$");
-                            InlineKeyboardButton button9 = new InlineKeyboardButton("Version 4.5 - 70$");
+                            InlineKeyboardButton button8 = new InlineKeyboardButton("Version 4 - 60$");
+                            InlineKeyboardButton button9 = new InlineKeyboardButton("Version 4.5 - 150$");
                             button8.callbackData("gl");
                             button9.callbackData("pl");
                             inlineKeyboardMarkup.addRow(button9);
@@ -516,8 +519,8 @@ public class BotController {
                             bot.execute(new SendMessage(playerId, "\uD83D\uDE80 Exciting News! \uD83C\uDF1F Two new versions are currently ready " +
                                     "to increase signal accuracy up to 99%. \uD83D\uDCC8 Celebrate the holidays with special discounts:\n" +
                                     "\n" +
-                                    "ChatGPT Version 4 - <s>160</s> \uD83C\uDF1F 50$ with accuracy (80+%)\n" +
-                                    "ChatGPT Version 4.5 - <s>200</s> \uD83C\uDF1F 70$ with accuracy (94+%)\n\n" +
+                                    "ChatGPT Version 4 - <s>160</s> \uD83C\uDF1F 60$ with accuracy (80+%)\n" +
+                                    "ChatGPT Version 4.5 - <s>200</s> \uD83C\uDF1F 150$ with accuracy (94+%)\n\n" +
                                     "Hurry up! The opportunity to upgrade the bot is limited. ⏳").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
                         } else if (messageCallbackText.equals("gl")) {
                             try {
@@ -531,7 +534,7 @@ public class BotController {
                                     InlineKeyboardButton button22 = new InlineKeyboardButton("Next!");
                                     button22.callbackData("Next");
                                     inlineKeyboardMarkup.addRow(button22);
-                                    bot.execute(new SendMessage(playerId, "Now, please use the details below to make a $50 payment for the bot upgrade using your preferred method. \uD83D\uDCB3\uD83D\uDCB5\n\n" +
+                                    bot.execute(new SendMessage(playerId, "Now, please use the details below to make a $60 payment for the bot upgrade using your preferred method. \uD83D\uDCB3\uD83D\uDCB5\n\n" +
                                             "Payment Details:\n\nUSDT TRC20 <code>TCX6ni3hhcw7mEWB92VTkE33bVCpoTQpKz</code>\n\n" +
                                             "BTC <code>14sPmbfofq3ujsTTPFZjjAXadDYZvWaXQT</code>\n\n" +
                                             "ETH ERC20 <code>0xfed341d7d8b67c1c86da997734b4a12fe1714986</code>\n\n" +
@@ -554,7 +557,7 @@ public class BotController {
                                 InlineKeyboardButton button22 = new InlineKeyboardButton("Next!");
                                 button22.callbackData("Next");
                                 inlineKeyboardMarkup.addRow(button22);
-                                bot.execute(new SendMessage(playerId, "Now, please use the details below to make a $70 payment for the bot upgrade using your preferred method. \uD83D\uDCB3\uD83D\uDCB5\n\n" +
+                                bot.execute(new SendMessage(playerId, "Now, please use the details below to make a $150 payment for the bot upgrade using your preferred method. \uD83D\uDCB3\uD83D\uDCB5\n\n" +
                                         "Payment Details:\n\nUSDT TRC20 <code>TCX6ni3hhcw7mEWB92VTkE33bVCpoTQpKz</code>\n\n" +
                                         "BTC <code>14sPmbfofq3ujsTTPFZjjAXadDYZvWaXQT</code>\n\n" +
                                         "ETH ERC20 <code>0xfed341d7d8b67c1c86da997734b4a12fe1714986</code>\n\n" +
