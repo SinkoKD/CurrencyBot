@@ -32,6 +32,7 @@ public class BotController {
 
     public static JedisPool jedisPool;
     public static final String USER_DB_MAP_KEY = "userDBMap";
+    public static TelegramBot bot;
     private static final Logger logger = Logger.getLogger(BotController.class.getName());
 
     public static void main(String[] args) throws URISyntaxException {
@@ -51,7 +52,7 @@ public class BotController {
         String redisUriString = System.getenv("REDIS_URL");
         jedisPool = new JedisPool(new URI(redisUriString));
 
-        TelegramBot bot = new TelegramBot(TOKEN);
+        bot = new TelegramBot(TOKEN);
 
         bot.setUpdatesListener(updates -> {
             try (Jedis jedis = jedisPool.getResource()) {
@@ -124,10 +125,13 @@ public class BotController {
                                     if (checkUserDate.getTime() < currentDate.getTime()) {
                                         String userTgID = keyForUser.substring(10);
                                         if (currentUser.isDeposited() && currentUser.getTimesTextWasSent() == 1) {
-                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 I received an update, now my signals have become even more accurate! This is a great opportunity to earn money. Try trading with me for the next 8 hours. ").parseMode(HTML));
+                                            bot.execute(new SendMessage(userTgID, "\uD83C\uDFC6 For new users, there's an opportunity to upgrade signal accuracy to 94%. Use the command /upgrade. \uD83C\uDFAF").parseMode(HTML));
                                             increaseTimesWasSent(keyForUser);
                                         } else if (currentUser.isDeposited() && currentUser.getTimesTextWasSent() == 2) {
-                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 The market is in a fantastic state at the moment. It's the ideal time to trade and make easy money! Only 4 hours left until the market is awesome.").parseMode(HTML));
+                                            bot.execute(new SendMessage(userTgID, "\uD83C\uDF81 90% of users already earn more in the first day than they paid for upgrading my version. To do this now, use the command /upgrade. ✅").parseMode(HTML));
+                                            increaseTimesWasSent(keyForUser);
+                                        } else if (currentUser.isDeposited() && currentUser.getTimesTextWasSent() == 3) {
+                                            bot.execute(new SendMessage(userTgID, "\uD83C\uDFC6 For new users, there's an opportunity to upgrade signal accuracy to 94%. Use the command /upgrade. \uD83C\uDFAF").parseMode(HTML));
                                             increaseTimesWasSent(keyForUser);
                                         } else if (currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 1) {
                                             bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 The final step to receiving signals is left! Everything can be done quickly and conveniently for you! If you encounter any issues while depositing, please review the video above. Also use promo code 50START to receive bonus to your deposit.").parseMode(HTML));
@@ -422,6 +426,24 @@ public class BotController {
                         inlineKeyboardMarkup.addRow(button32);
                         bot.execute(new SendMessage(playerId, "If you don't find an answer to your question or if you have a different request, please send a message in the format:\n<code>needReply:</code> *your text*. \n" +
                                 "Please do this in one message, and I'll get back to you as soon as possible.").replyMarkup(inlineKeyboardMarkup).parseMode(HTML));
+                    }  else if (messageCallbackText.equals("card")) {
+                        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+                        InlineKeyboardButton button8 = new InlineKeyboardButton("Version 4 - 60$");
+                        InlineKeyboardButton button9 = new InlineKeyboardButton("Version 4.5 - 150$");
+                        button8.callbackData("card60");
+                        button9.callbackData("card150");
+                        inlineKeyboardMarkup.addRow(button9);
+                        inlineKeyboardMarkup.addRow(button8);
+                        bot.execute(new SendMessage(playerId, "✨ Choose the version of the bot you want to get!").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
+
+                    } else if (messageCallbackText.equals("card60")) {
+                        sendFirstCardInstruction(60,playerId);
+                    } else if (messageCallbackText.equals("card150")) {
+                        sendFirstCardInstruction(150,playerId);
+                    } else if (messageCallbackText.equals("pay60")) {
+                        sendSecondCardInstruction(60,playerId);
+                    } else if (messageCallbackText.equals("pay150")) {
+                        sendSecondCardInstruction(150,playerId);
                     } else if (messageText.equals("/start")) {
                         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                         InlineKeyboardButton button32 = new InlineKeyboardButton("Let's start");
@@ -510,18 +532,31 @@ public class BotController {
                         } else if (messageText.equals("/upgrade")) {
                             InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
+                            InlineKeyboardButton button8 = new InlineKeyboardButton("Pay with crypto");
+                            InlineKeyboardButton button9 = new InlineKeyboardButton("Pay with bank card");
+                            button8.callbackData("crypto");
+                            button9.callbackData("card");
+                            inlineKeyboardMarkup.addRow(button9);
+                            inlineKeyboardMarkup.addRow(button8);
+                            bot.execute(new SendMessage(playerId, "\uD83C\uDF89 Exciting news! We've got two new versions " +
+                                    "ready to make the signal even better, up to 99% accuracy! \uD83C\uDFAF\n" +
+                                    "\n" +
+                                    "\uD83C\uDFC6 Enjoy special holiday discounts:\n" +
+                                    "\n" +
+                                    "\uD83D\uDFE2 ChatGPT Version 4.5 - Was $200, now just $150! Achieve 94%+ accuracy. \uD83E\uDD2F <b>Most popular</b>.\n" +
+                                    "\n" +
+                                    "\uD83D\uDFE1 ChatGPT Version 4 - Was $100, now only $60! Get 80%+ accuracy. \n" +
+                                    "\n" +
+                                    "\uD83D\uDEA8 Don't miss out! The chance to upgrade your bot is limited. ⏳").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
+                        } else if (messageCallbackText.equals("crypto")) {
+                            InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
                             InlineKeyboardButton button8 = new InlineKeyboardButton("Version 4 - 60$");
                             InlineKeyboardButton button9 = new InlineKeyboardButton("Version 4.5 - 150$");
                             button8.callbackData("gl");
                             button9.callbackData("pl");
                             inlineKeyboardMarkup.addRow(button9);
                             inlineKeyboardMarkup.addRow(button8);
-                            bot.execute(new SendMessage(playerId, "\uD83D\uDE80 Exciting News! \uD83C\uDF1F Two new versions are currently ready " +
-                                    "to increase signal accuracy up to 99%. \uD83D\uDCC8 Celebrate the holidays with special discounts:\n" +
-                                    "\n" +
-                                    "ChatGPT Version 4 - <s>160</s> \uD83C\uDF1F 60$ with accuracy (80+%)\n" +
-                                    "ChatGPT Version 4.5 - <s>200</s> \uD83C\uDF1F 150$ with accuracy (94+%)\n\n" +
-                                    "Hurry up! The opportunity to upgrade the bot is limited. ⏳").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
+                            bot.execute(new SendMessage(playerId, "✨ Choose the version of the bot you want to get!").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
                         } else if (messageCallbackText.equals("gl")) {
                             try {
                                 String userKey = USER_DB_MAP_KEY + ":" + playerId;
@@ -535,9 +570,9 @@ public class BotController {
                                     button22.callbackData("Next");
                                     inlineKeyboardMarkup.addRow(button22);
                                     bot.execute(new SendMessage(playerId, "Now, please use the details below to make a $60 payment for the bot upgrade using your preferred method. \uD83D\uDCB3\uD83D\uDCB5\n\n" +
-                                            "Payment Details:\n\nUSDT TRC20 <code>TCX6ni3hhcw7mEWB92VTkE33bVCpoTQpKz</code>\n\n" +
-                                            "BTC <code>14sPmbfofq3ujsTTPFZjjAXadDYZvWaXQT</code>\n\n" +
-                                            "ETH ERC20 <code>0xfed341d7d8b67c1c86da997734b4a12fe1714986</code>\n\n" +
+                                            "Payment Details:\n\nUSDT TRC20 <code>TVqr4evixik9qDcq4x4by5DtkhDaGQszo3</code>\n\n" +
+                                            "BTC <code>3Ngts7pzw6JF9VBo7zpgKbx1XT7SLBUvRC</code>\n\n" +
+                                            "ETH ERC20 <code>0x475b2e0849a1b88fc10d963621404c055ff6002c</code>\n\n" +
                                             "<i>Important! Please consider any transaction fees, if the amount " +
                                             "received is less than the required sum, the version won't be updated! " +
                                             "</i>\n\n \uD83D\uDE0A\uD83D\uDCB3\uD83D\uDE80 After making the payment, " +
@@ -558,9 +593,9 @@ public class BotController {
                                 button22.callbackData("Next");
                                 inlineKeyboardMarkup.addRow(button22);
                                 bot.execute(new SendMessage(playerId, "Now, please use the details below to make a $150 payment for the bot upgrade using your preferred method. \uD83D\uDCB3\uD83D\uDCB5\n\n" +
-                                        "Payment Details:\n\nUSDT TRC20 <code>TCX6ni3hhcw7mEWB92VTkE33bVCpoTQpKz</code>\n\n" +
-                                        "BTC <code>14sPmbfofq3ujsTTPFZjjAXadDYZvWaXQT</code>\n\n" +
-                                        "ETH ERC20 <code>0xfed341d7d8b67c1c86da997734b4a12fe1714986</code>\n\n" +
+                                        "Payment Details:\n\nUSDT TRC20 <code>TVqr4evixik9qDcq4x4by5DtkhDaGQszo3</code>\n\n" +
+                                        "BTC <code>3Ngts7pzw6JF9VBo7zpgKbx1XT7SLBUvRC</code>\n\n" +
+                                        "ETH ERC20 <code>0x475b2e0849a1b88fc10d963621404c055ff6002c</code>\n\n" +
                                         "<i>Important! Please consider any transaction fees, if the amount " +
                                         "received is less than the required sum, the version won't be updated! " +
                                         "</i>\n\n \uD83D\uDE0A\uD83D\uDCB3\uD83D\uDE80 After making the payment, " +
@@ -712,5 +747,44 @@ public class BotController {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> jedisPool.close()));
     }
 
+    public static void sendFirstCardInstruction(int amount, long playerId){
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        InlineKeyboardButton button32 = new InlineKeyboardButton("Next Step");
+        String callBack = "pay" + amount;
+        button32.callbackData(callBack);
+        inlineKeyboardMarkup.addRow(button32);
+        bot.execute(new SendMessage(playerId, "How to pay using a card? \uD83D\uDECD\uFE0F It's pretty simple, just follow the " +
+                "instructions below. If you have any questions at any stage, use the /support command.\n" +
+                "\n" +
+                "1) We'll use the @wallet bot for payment. It's Telegram's official payment bot. Go to it.\n" +
+                "2) Tap on the \"START\" button.\n" +
+                "Tap on \"Open Wallet\". \n" +
+                "3) Now let's buy cryptocurrency to make the payment. To do this, tap on \"Add crypto\", then tap on \"Bank card\".\n" +
+                "4)Choose dollars (USDT). \n" +
+                "5) Enter the amount of " + amount+ "$\uD83D\uDC48\n" +
+                "6) Tap \"Buy " + amount+" USDT\"\n" +
+                "7) And here's the final window tap on \"Pay with card\". Enter your card details for the purchase and you're done! \n" +
+                "\n" +
+                "\uD83D\uDE0A\uD83D\uDC4D After that, re-enter the bot and you'll have a balance greater than $0. If everything " +
+                "went well, tap the \"Next Step\" button. If you encounter any difficulties, write to /support.").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
+    }
+
+    public static void sendSecondCardInstruction(int amount, long playerId){
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        InlineKeyboardButton button32 = new InlineKeyboardButton("Done!");
+        button32.callbackData("Next");
+        inlineKeyboardMarkup.addRow(button32);
+        bot.execute(new SendMessage(playerId, "\uD83D\uDE80 Next step is to send the money. \n" +
+                "\n" +
+                "1) In the main menu of the @wallet bot, tap on \"Send\". \n" +
+                "2) Choose \"External Wallet\". \n" +
+                "3) Select dollars (USDT). \n" +
+                "4) Paste my address into the top line. Tap on it to copy: TLxY9Rb3HjfQkDWPw7z2k3JiC65G1P4ZHo. \n" +
+                "5) Enter the "+ amount +  "$. Note that if you send less than required, the service won't activate. \n" +
+                "6) Everything's set, proceed with the payment. \n" +
+                "\n" +
+                "After the operation is completed, tap on the button below \"Done!\"." +
+                " If you encounter any difficulties, write to /support.").parseMode(HTML).replyMarkup(inlineKeyboardMarkup));
+    }
 
 }
