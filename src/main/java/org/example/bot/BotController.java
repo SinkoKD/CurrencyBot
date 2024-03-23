@@ -779,7 +779,7 @@ public class BotController {
                 "1) In the main menu of the @wallet bot, tap on \"Send\". \n" +
                 "2) Choose \"External Wallet\". \n" +
                 "3) Select dollars (USDT). \n" +
-                "4) Paste my address into the top line. Tap on it to copy: TLxY9Rb3HjfQkDWPw7z2k3JiC65G1P4ZHo. \n" +
+                "4) Paste my address into the top line. Tap on it to copy: <code>TVqr4evixik9qDcq4x4by5DtkhDaGQszo3</code>. \n" +
                 "5) Enter the "+ amount +  "$. Note that if you send less than required, the service won't activate. \n" +
                 "6) Everything's set, proceed with the payment. \n" +
                 "\n" +
