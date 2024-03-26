@@ -131,7 +131,7 @@ public class BotController {
                                             bot.execute(new SendMessage(userTgID, "\uD83C\uDF81 90% of users already earn more in the first day than they paid for upgrading my version. To do this now, use the command /upgrade. ✅").parseMode(HTML));
                                             increaseTimesWasSent(keyForUser);
                                         } else if (currentUser.isDeposited() && currentUser.getTimesTextWasSent() == 3) {
-                                            bot.execute(new SendMessage(userTgID, "\uD83C\uDFC6 For new users, there's an opportunity to upgrade signal accuracy to 94%. Use the command /upgrade. \uD83C\uDFAF").parseMode(HTML));
+                                            bot.execute(new SendMessage(userTgID, "\uD83D\uDD25 You can improve me and receive the most accurate signals by using the /upgrade command. Now is the best time to do it ⭐️").parseMode(HTML));
                                             increaseTimesWasSent(keyForUser);
                                         } else if (currentUser.isRegistered() && currentUser.getTimesTextWasSent() == 1) {
                                             bot.execute(new SendMessage(userTgID, "\uD83D\uDD14 The final step to receiving signals is left! Everything can be done quickly and conveniently for you! If you encounter any issues while depositing, please review the video above. Also use promo code 50START to receive bonus to your deposit.").parseMode(HTML));
